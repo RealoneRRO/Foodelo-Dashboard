@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foodelo Pilot — Executive Command Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --surface: #0d1318;
+    --surface2: #111920;
+    --border: rgba(255,255,255,0.06);
+    --border-bright: rgba(255,255,255,0.12);
+    --accent: #f97316;
+    --accent2: #22d3ee;
+    --accent3: #a3e635;
+    --accent4: #f43f5e;
+    --accent5: #8b5cf6;
+    --text: #e8edf2;
+    --text-muted: #6b7f8f;
+    --text-dim: #3a4f5e;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #eab308;
+    --glow-orange: rgba(249,115,22,0.15);
+    --glow-cyan: rgba(34,211,238,0.1);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(249,115,22,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(249,115,22,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(8,12,16,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), #dc2626);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+  }
+  .logo-text span { color: var(--accent); }
+
+  .header-center {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100%{ opacity:1; transform:scale(1); }
+    50%{ opacity:0.6; transform:scale(1.3); }
+  }
+
+  .header-right {
+    display: flex; align-items: center; gap: 16px;
+  }
+
+  .clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+  }
+
+  .month-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    background: var(--glow-orange);
+  }
+
+  /* Data source bar */
+  .source-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 24px;
+    display: flex; align-items: center; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .source-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .source-chips {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .chip {
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-bright);
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-muted);
+    background: transparent;
+  }
+  .chip:hover { border-color: var(--accent2); color: var(--accent2); }
+  .chip.active { border-color: var(--accent2); color: var(--accent2); background: var(--glow-cyan); }
+  .chip-dot { width:5px; height:5px; border-radius:50%; }
+
+  /* TABS NAV */
+  .tabs-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; gap: 4px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 12px 18px;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: none; background: none; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN LAYOUT */
+  .main {
+    padding: 20px 24px;
+    position: relative; z-index: 1;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Section headers */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    margin-top: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--border);
+  }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .kpi-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-1px);
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .kpi-card.orange::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .kpi-card.cyan::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .kpi-card.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+  .kpi-card.red::before { background: linear-gradient(90deg, var(--red), transparent); }
+  .kpi-card.purple::before { background: linear-gradient(90deg, var(--accent5), transparent); }
+  .kpi-card.lime::before { background: linear-gradient(90deg, var(--accent3), transparent); }
+
+  .kpi-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+    transition: all 0.5s;
+  }
+  .kpi-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .delta-up { color: var(--green); }
+  .delta-down { color: var(--red); }
+
+  .sparkline {
+    position: absolute; bottom: 0; right: 0;
+    width: 60px; height: 30px;
+    opacity: 0.4;
+  }
+
+  /* CHARTS GRID */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+  .chart-card:hover { border-color: var(--border-bright); }
+
+  .col-4 { grid-column: span 4; }
+  .col-6 { grid-column: span 6; }
+  .col-8 { grid-column: span 8; }
+  .col-12 { grid-column: span 12; }
+  .col-3 { grid-column: span 3; }
+
+  @media(max-width:1200px) {
+    .col-4,.col-3 { grid-column: span 6; }
+    .col-8 { grid-column: span 12; }
+  }
+  @media(max-width:768px) {
+    .col-4,.col-6,.col-8,.col-3 { grid-column: span 12; }
+  }
+
+  .chart-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .chart-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text-muted);
+  }
+
+  canvas { width: 100% !important; }
+
+  /* Progress bars */
+  .progress-item {
+    margin-bottom: 10px;
+  }
+  .progress-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .progress-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .progress-val {
+    font-family: 'Syne', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .progress-bar-bg {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease;
+  }
+
+  /* Table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .data-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .rank-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+  }
+
+  /* Score circle */
+  .score-circle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    border: 2px solid;
+  }
+
+  /* Status pill */
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+  .pill.green { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+  .pill.red { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+  .pill.yellow { background: rgba(234,179,8,0.1); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
+  .pill.orange { background: rgba(249,115,22,0.1); color: var(--accent); border: 1px solid rgba(249,115,22,0.2); }
+
+  /* Month progress track */
+  .pilot-track {
+    display: flex; gap: 8px; margin-bottom: 20px;
+  }
+  .track-phase {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .track-phase.active-phase {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(249,115,22,0.08), transparent);
+  }
+  .track-phase-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+  .track-phase-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .track-phase-bar {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .track-phase-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+    transition: width 1.5s ease;
+  }
+
+  /* Alert ticker */
+  .alert-ticker {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 14px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .ticker-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .ticker-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    animation: ticker 30s linear infinite;
+  }
+  @keyframes ticker {
+    0% { transform: translateX(100vw); }
+    100% { transform: translateX(-200%); }
+  }
+
+  /* Upload / connect zone */
+  .connect-card {
+    background: var(--surface);
+    border: 1px dashed var(--border-bright);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  .connect-card:hover {
+    border-color: var(--accent2);
+    background: var(--glow-cyan);
+  }
+  .connect-icon { font-size: 24px; margin-bottom: 6px; }
+  .connect-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .connect-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  input[type=file] { display: none; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: #ea6a0a; }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid var(--border-bright);
+  }
+  .btn-secondary:hover { color: var(--text); border-color: var(--accent2); }
+
+  .flex-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  /* Rider professionalism radar */
+  .radar-labels {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6px; margin-top: 10px;
+  }
+  .radar-item {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-muted);
+  }
+  .radar-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--text-dim); border-radius:2px; }
+
+  /* Tooltip */
+  .tooltip-host { position: relative; }
+  .tooltip-host:hover .tooltip-box { display: block; }
+  .tooltip-box {
+    display: none;
+    position: absolute; bottom: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%);
+    background: #1a2530;
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text);
+    white-space: nowrap;
+    z-index: 200;
+  }
+
+  .num-animate { transition: all 0.6s ease; }
+
+  /* WebSocket status */
+  .ws-status {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .ws-dot { width:6px; height:6px; border-radius:50%; }
+  .ws-dot.connected { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .ws-dot.simulated { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  @media(max-width:768px){
+    .summary-grid { grid-template-columns:1fr; }
+    .pilot-track { flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">🍜</div>
+    <div class="logo-text">Foodelo <span>Pilot</span></div>
+  </div>
+  <div class="header-center">
+    <div class="live-dot"></div>
+    <span>LIVE COMMAND DASHBOARD</span>
+    <span style="color:var(--text-dim)">·</span>
+    <span id="headerDate"></span>
+  </div>
+  <div class="header-right">
+    <div class="ws-status">
+      <div class="ws-dot simulated" id="wsDot"></div>
+      <span id="wsLabel">Simulated Feed</span>
+    </div>
+    <div class="clock" id="clock"></div>
+    <div class="month-badge" id="currentPhaseBadge">MONTH 1 — BASELINE</div>
+  </div>
+</header>
+
+<!-- SOURCE BAR -->
+<div class="source-bar">
+  <span class="source-label">Data Sources:</span>
+  <div class="source-chips">
+    <div class="chip active" onclick="toggleChip(this,'foodelo-api')">
+      <div class="chip-dot" style="background:var(--green)"></div>
+      Foodelo API
+    </div>
+    <div class="chip" onclick="triggerFileUpload('excel')" id="chip-excel">
+      <div class="chip-dot" style="background:var(--accent)"></div>
+      Excel / CSV Upload
+    </div>
+    <div class="chip" onclick="toggleChip(this,'sharepoint')" id="chip-sp">
+      <div class="chip-dot" style="background:var(--accent2)"></div>
+      SharePoint
+    </div>
+    <div class="chip" onclick="triggerFileUpload('json')" id="chip-json">
+      <div class="chip-dot" style="background:var(--accent5)"></div>
+      JSON Feed
+    </div>
+    <div class="chip" onclick="connectWebSocket()" id="chip-ws">
+      <div class="chip-dot" style="background:var(--yellow)"></div>
+      WebSocket (Live)
+    </div>
+  </div>
+  <input type="file" id="fileInput" accept=".csv,.xlsx,.json" onchange="handleFileUpload(event)">
+  <div style="margin-left:auto;" class="flex-row">
+    <button class="btn btn-secondary" onclick="exportData()">⬇ Export</button>
+    <button class="btn btn-primary" onclick="refreshAll()">↻ Refresh</button>
+  </div>
+</div>
+
+<!-- ALERT TICKER -->
+<div class="alert-ticker">
+  <span class="ticker-label">⚡ Live Feed</span>
+  <div class="ticker-text" id="alertTicker">
+    Order #1042 Completed — Jollof Rice — ₦2,400 · Rider EMK-07 delivered in 18 min · New merchant onboarded: Mama Titi Kitchen · Platform uptime: 99.7% · 3 new customer reviews · Payment success rate: 97.2% · Daily orders target 85% achieved · Top meal today: Pounded Yam Egusi
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('overview')">📊 Overview</button>
+  <button class="tab-btn" onclick="switchTab('financial')">💰 Financial</button>
+  <button class="tab-btn" onclick="switchTab('customers')">👥 Customers</button>
+  <button class="tab-btn" onclick="switchTab('merchants')">🏪 Merchants</button>
+  <button class="tab-btn" onclick="switchTab('tech')">⚙️ Technology</button>
+  <button class="tab-btn" onclick="switchTab('riders')">🛵 Riders</button>
+  <button class="tab-btn" onclick="switchTab('scalability')">📈 Scalability</button>
+  <button class="tab-btn" onclick="switchTab('connect')">🔗 Connect Data</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ── OVERVIEW TAB ── -->
+  <div class="tab-panel active" id="tab-overview">
+
+    <!-- Pilot phase track -->
+    <div class="section-title">3-Month Pilot Phase Tracker</div>
+    <div class="pilot-track">
+      <div class="track-phase active-phase">
+        <div class="track-phase-label">Month 1</div>
+        <div class="track-phase-name">🔵 Baseline</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px;">Establish metrics, onboard</div>
+        <div class="track-phase-bar"><div class="track-phase-fill" style="width:68%"></div></div>
+        <div style="font-size:9px;color:var(--accent);margin-top:4px;font-family:'JetBrains Mono',monospace;">68% complete</div>
+      </div>
+      <div class="track-phase">
+        <div class="track-phase-label">Month 2</div>
+        <div class="track-phase-name" style="color:var(--text-muted)">⚡ Optimization</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">Improve & iterate</div>
+        <div class="track-phase-bar"><div class="track-phase-fill" style="width:0%"></div></div>
+        <div style="font-size:9px;color:var(--text-dim);margin-top:4px;font-family:'JetBrains Mono',monospace;">Not started</div>
+      </div>
+      <div class="track-phase">
+        <div class="track-phase-label">Month 3</div>
+        <div class="track-phase-name" style="color:var(--text-muted)">✅ Validation</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;">Scale readiness check</div>
+        <div class="track-phase-bar"><div class="track-phase-fill" style="width:0%"></div></div>
+        <div style="font-size:9px;color:var(--text-dim);margin-top:4px;font-family:'JetBrains Mono',monospace;">Not started</div>
+      </div>
+    </div>
+
+    <!-- Top KPIs -->
+    <div class="section-title">Key Performance Indicators — Today</div>
+    <div class="kpi-grid">
+      <div class="kpi-card orange tooltip-host">
+        <div class="kpi-label">Total Orders</div>
+        <div class="kpi-value" id="kpi-orders" style="color:var(--accent)">1,284</div>
+        <div class="kpi-sub"><span class="delta-up">▲ 12.4%</span><span>vs yesterday</span></div>
+        <div class="tooltip-box">Cumulative pilot orders. Target: 5,000/month</div>
+      </div>
+      <div class="kpi-card orange tooltip-host">
+        <div class="kpi-label">Revenue</div>
+        <div class="kpi-value" id="kpi-rev" style="color:var(--accent)">₦3.08M</div>
+        <div class="kpi-sub"><span class="delta-up">▲ 8.1%</span><span>vs last week</span></div>
+      </div>
+      <div class="kpi-card green tooltip-host">
+        <div class="kpi-label">Platform Uptime</div>
+        <div class="kpi-value" id="kpi-uptime" style="color:var(--green)">99.7%</div>
+        <div class="kpi-sub"><span class="delta-up">✓ SLA met</span></div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">Active Riders</div>
+        <div class="kpi-value" id="kpi-riders" style="color:var(--accent2)">24</div>
+        <div class="kpi-sub"><span class="delta-up">▲ 4</span><span>new today</span></div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">Avg Delivery</div>
+        <div class="kpi-value" id="kpi-delivery" style="color:var(--accent2)">22<span style="font-size:13px">min</span></div>
+        <div class="kpi-sub"><span class="delta-up">▼ 3min</span><span>improvement</span></div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">CSAT Score</div>
+        <div class="kpi-value" id="kpi-csat" style="color:var(--green)">4.3<span style="font-size:13px">/5</span></div>
+        <div class="kpi-sub"><span class="delta-up">▲ 0.2</span><span>this week</span></div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">NPS</div>
+        <div class="kpi-value" id="kpi-nps" style="color:var(--accent5)">62</div>
+        <div class="kpi-sub"><span class="delta-up">Good</span></div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Refund Rate</div>
+        <div class="kpi-value" id="kpi-refund" style="color:var(--red)">1.8<span style="font-size:13px">%</span></div>
+        <div class="kpi-sub"><span class="delta-up">▼ 0.3%</span><span>improving</span></div>
+      </div>
+      <div class="kpi-card lime">
+        <div class="kpi-label">Payment Success</div>
+        <div class="kpi-value" id="kpi-payment" style="color:var(--accent3)">97.2<span style="font-size:13px">%</span></div>
+        <div class="kpi-sub"><span class="delta-up">▲ 1.1%</span></div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-label">Op Expenses</div>
+        <div class="kpi-value" id="kpi-opex" style="color:var(--accent)">₦820K</div>
+        <div class="kpi-sub"><span>Rider+Support+Inc.</span></div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="section-title">Performance Trends</div>
+    <div class="charts-grid">
+      <div class="chart-card col-8">
+        <div class="chart-title">Daily Orders & Revenue — Month 1 <span class="chart-badge">LIVE</span></div>
+        <canvas id="orderRevenueChart" height="220"></canvas>
+      </div>
+      <div class="chart-card col-4">
+        <div class="chart-title">Orders by Category</div>
+        <canvas id="categoryChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card col-4">
+        <div class="chart-title">Conversion Funnel</div>
+        <canvas id="funnelChart" height="180"></canvas>
+      </div>
+      <div class="chart-card col-4">
+        <div class="chart-title">Customer Retention (Days)</div>
+        <canvas id="retentionChart" height="180"></canvas>
+      </div>
+      <div class="chart-card col-4">
+        <div class="chart-title">Hourly Order Volume</div>
+        <canvas id="hourlyChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- Top meals -->
+    <div class="section-title">Top Meals from InfraCredit DREEF Pilot (50 Staff)</div>
+    <div class="chart-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Meal</th>
+            <th>Orders</th>
+            <th>Revenue</th>
+            <th>Avg Rating</th>
+            <th>Trend</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="mealsTable"></tbody>
+      </table>
+    </div>
+
+  </div><!-- /overview -->
+
+
+  <!-- ── FINANCIAL TAB ── -->
+  <div class="tab-panel" id="tab-financial">
+    <div class="section-title">Financial Performance Dashboard</div>
+    <div class="kpi-grid">
+      <div class="kpi-card orange">
+        <div class="kpi-label">Total Completed Orders</div>
+        <div class="kpi-value" style="color:var(--accent)" id="fin-orders">1,284</div>
+        <div class="kpi-sub"><span class="delta-up">▲ 12%</span> MTD</div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-label">Gross Revenue</div>
+        <div class="kpi-value" style="color:var(--accent)" id="fin-rev">₦3.08M</div>
+        <div class="kpi-sub">Month to date</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Operational Expenses</div>
+        <div class="kpi-value" style="color:var(--red)" id="fin-opex">₦820K</div>
+        <div class="kpi-sub">Riders + Support + Inc.</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Net Revenue</div>
+        <div class="kpi-value" style="color:var(--green)" id="fin-net">₦2.26M</div>
+        <div class="kpi-sub"><span class="delta-up">73.4%</span> margin</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Refund Rate</div>
+        <div class="kpi-value" style="color:var(--red)">1.8%</div>
+        <div class="kpi-sub"><span class="delta-up">▼ improving</span></div>
+      </div>
+      <div class="kpi-card lime">
+        <div class="kpi-label">ROAS</div>
+        <div class="kpi-value" style="color:var(--accent3)">3.75x</div>
+        <div class="kpi-sub">Marketing efficiency</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card col-6">
+        <div class="chart-title">Revenue vs Expenses — Month Progression</div>
+        <canvas id="finRevExpChart" height="240"></canvas>
+      </div>
+      <div class="chart-card col-6">
+        <div class="chart-title">Cost Breakdown</div>
+        <canvas id="costBreakChart" height="240"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card col-12">
+        <div class="chart-title">Revenue Growth Trajectory — Month 1 → Month 3 (Projection)</div>
+        <canvas id="revenueGrowthChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── CUSTOMERS TAB ── -->
+  <div class="tab-panel" id="tab-customers">
+    <div class="section-title">Customer Engagement Analytics</div>
+    <div class="kpi-grid">
+      <div class="kpi-card cyan">
+        <div class="kpi-label">DAU</div>
+        <div class="kpi-value" style="color:var(--accent2)">428</div>
+        <div class="kpi-sub"><span class="delta-up">▲ 6.2%</span></div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">WAU</div>
+        <div class="kpi-value" style="color:var(--accent2)">1.8K</div>
+        <div class="kpi-sub">Weekly actives</div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">MAU</div>
+        <div class="kpi-value" style="color:var(--accent2)">4.2K</div>
+        <div class="kpi-sub">Monthly actives</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Conversion Rate</div>
+        <div class="kpi-value" style="color:var(--green)">34.2%</div>
+        <div class="kpi-sub">Visit → Order</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Repeat Purchase</div>
+        <div class="kpi-value" style="color:var(--green)">58.7%</div>
+        <div class="kpi-sub"><span class="delta-up">▲ 4.3%</span></div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">CLV (Pilot Est.)</div>
+        <div class="kpi-value" style="color:var(--accent5)">₦14.6K</div>
+        <div class="kpi-sub">3-month window</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">CSAT</div>
+        <div class="kpi-value" style="color:var(--green)">4.3/5</div>
+        <div class="kpi-sub">Customer sat. score</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">NPS</div>
+        <div class="kpi-value" style="color:var(--accent5)">62</div>
+        <div class="kpi-sub">Net Promoter Score</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Complaint Rate</div>
+        <div class="kpi-value" style="color:var(--red)">2.1%</div>
+        <div class="kpi-sub"><span class="delta-up">▼ improving</span></div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card col-6">
+        <div class="chart-title">Customer Retention — 30/60/90 Day Cohorts</div>
+        <canvas id="retentionCohortChart" height="250"></canvas>
+      </div>
+      <div class="chart-card col-6">
+        <div class="chart-title">Review Score Distribution</div>
+        <canvas id="reviewChart" height="250"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── MERCHANTS TAB ── -->
+  <div class="tab-panel" id="tab-merchants">
+    <div class="section-title">Merchant / Partner Performance</div>
+    <div class="kpi-grid">
+      <div class="kpi-card orange">
+        <div class="kpi-label">Active Merchants</div>
+        <div class="kpi-value" style="color:var(--accent)">12</div>
+        <div class="kpi-sub">Pilot partners</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Acceptance Rate</div>
+        <div class="kpi-value" style="color:var(--green)">91.4%</div>
+        <div class="kpi-sub"><span class="delta-up">▲ 3%</span></div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Rejection Rate</div>
+        <div class="kpi-value" style="color:var(--red)">8.6%</div>
+        <div class="kpi-sub">Monitor closely</div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">Avg Orders/Merchant</div>
+        <div class="kpi-value" style="color:var(--accent2)">107</div>
+        <div class="kpi-sub">This month</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Merchant Sat. Score</div>
+        <div class="kpi-value" style="color:var(--green)">4.1/5</div>
+        <div class="kpi-sub">Survey avg.</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Avg Escalations</div>
+        <div class="kpi-value" style="color:var(--red)">1.3</div>
+        <div class="kpi-sub">Per merchant/wk</div>
+      </div>
+    </div>
+
+    <div class="section-title">Merchant Leaderboard</div>
+    <div class="chart-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Merchant</th>
+            <th>Orders</th>
+            <th>Acceptance %</th>
+            <th>Avg Prep Time</th>
+            <th>Sat. Score</th>
+            <th>Escalations</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="merchantTable"></tbody>
+      </table>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card col-6">
+        <div class="chart-title">Orders per Merchant</div>
+        <canvas id="merchantOrdersChart" height="220"></canvas>
+      </div>
+      <div class="chart-card col-6">
+        <div class="chart-title">Delivery Timeline: Prep → Customer (mins)</div>
+        <canvas id="deliveryTimelineChart" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── TECH TAB ── -->
+  <div class="tab-panel" id="tab-tech">
+    <div class="section-title">Technology Performance</div>
+    <div class="kpi-grid">
+      <div class="kpi-card green">
+        <div class="kpi-label">Platform Uptime</div>
+        <div class="kpi-value" style="color:var(--green)">99.7%</div>
+        <div class="kpi-sub"><span class="pill green">SLA Met</span></div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Order Success Rate</div>
+        <div class="kpi-value" style="color:var(--green)">98.4%</div>
+        <div class="kpi-sub"><span class="delta-up">▲ 0.6%</span></div>
+      </div>
+      <div class="kpi-card lime">
+        <div class="kpi-label">Payment Success</div>
+        <div class="kpi-value" style="color:var(--accent3)">97.2%</div>
+        <div class="kpi-sub"><span class="delta-up">▲ 1.1%</span></div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">Wallet Usage Rate</div>
+        <div class="kpi-value" style="color:var(--accent2)">41.3%</div>
+        <div class="kpi-sub">of total payments</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Failed Transactions</div>
+        <div class="kpi-value" style="color:var(--red)">2.8%</div>
+        <div class="kpi-sub"><span class="delta-down">Needs attention</span></div>
+      </div>
+      <div class="kpi-card yellow" style="--yellow-glow:rgba(234,179,8,0.1)">
+        <div class="kpi-label">Bug Resolution Time</div>
+        <div class="kpi-value" style="color:var(--yellow)">4.2<span style="font-size:13px">hrs</span></div>
+        <div class="kpi-sub">Avg time</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">Feature Adoption</div>
+        <div class="kpi-value" style="color:var(--accent5)">67.8%</div>
+        <div class="kpi-sub">Wallet + tracking</div>
+      </div>
+      <div class="kpi-card lime">
+        <div class="kpi-label">Scale Readiness</div>
+        <div class="kpi-value" style="color:var(--accent3)">74%</div>
+        <div class="kpi-sub">Infra score</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card col-8">
+        <div class="chart-title">Platform Uptime — Hourly (Last 24h) <span class="chart-badge">LIVE</span></div>
+        <canvas id="uptimeChart" height="200"></canvas>
+      </div>
+      <div class="chart-card col-4">
+        <div class="chart-title">Payment Methods Split</div>
+        <canvas id="paymentSplitChart" height="200"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card col-12">
+        <div class="chart-title">Tech KPIs — Week over Week Trend</div>
+        <canvas id="techTrendChart" height="180"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── RIDERS TAB ── -->
+  <div class="tab-panel" id="tab-riders">
+    <div class="section-title">Rider Operations & Professionalism</div>
+    <div class="kpi-grid">
+      <div class="kpi-card orange">
+        <div class="kpi-label">Active Riders</div>
+        <div class="kpi-value" style="color:var(--accent)">24</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Acceptance Rate</div>
+        <div class="kpi-value" style="color:var(--green)">88.6%</div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">Orders/Rider/Day</div>
+        <div class="kpi-value" style="color:var(--accent2)">12.4</div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">Avg Delivery Time</div>
+        <div class="kpi-value" style="color:var(--accent2)">22<span style="font-size:13px">min</span></div>
+      </div>
+      <div class="kpi-card lime">
+        <div class="kpi-label">Rider Earnings/Day</div>
+        <div class="kpi-value" style="color:var(--accent3)">₦8.4K</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Retention Rate</div>
+        <div class="kpi-value" style="color:var(--green)">91.7%</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">Capacity Util.</div>
+        <div class="kpi-value" style="color:var(--accent5)">78.3%</div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-label">Prof. Score Index</div>
+        <div class="kpi-value" style="color:var(--accent)">82/100</div>
+      </div>
+    </div>
+
+    <div class="section-title">Professionalism Scorecard</div>
+    <div class="charts-grid">
+      <div class="chart-card col-4">
+        <div class="chart-title">Professionalism Radar</div>
+        <canvas id="profRadarChart" height="260"></canvas>
+        <div class="radar-labels">
+          <div class="radar-item"><div class="radar-dot" style="background:var(--accent)"></div>Appearance</div>
+          <div class="radar-item"><div class="radar-dot" style="background:var(--accent2)"></div>Communication</div>
+          <div class="radar-item"><div class="radar-dot" style="background:var(--green)"></div>Conduct</div>
+          <div class="radar-item"><div class="radar-dot" style="background:var(--accent5)"></div>Reliability</div>
+          <div class="radar-item"><div class="radar-dot" style="background:var(--yellow)"></div>Customer FB</div>
+          <div class="radar-item"><div class="radar-dot" style="background:var(--accent3)"></div>Training</div>
+        </div>
+      </div>
+      <div class="chart-card col-4">
+        <div class="chart-title">Professionalism Breakdown</div>
+        <div class="progress-item">
+          <div class="progress-row"><span class="progress-name">Appearance & Uniform</span><span class="progress-val" style="color:var(--accent)">87%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:87%;background:var(--accent)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-row"><span class="progress-name">Communication & Politeness</span><span class="progress-val" style="color:var(--accent2)">83%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:83%;background:var(--accent2)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-row"><span class="progress-name">Conduct & Compliance</span><span class="progress-val" style="color:var(--green)">92%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:92%;background:var(--green)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-row"><span class="progress-name">Attendance & Punctuality</span><span class="progress-val" style="color:var(--accent5)">79%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:79%;background:var(--accent5)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-row"><span class="progress-name">Customer Feedback Rating</span><span class="progress-val" style="color:var(--yellow)">81%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:81%;background:var(--yellow)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-row"><span class="progress-name">Training Completion</span><span class="progress-val" style="color:var(--accent3)">74%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:74%;background:var(--accent3)"></div></div>
+        </div>
+      </div>
+      <div class="chart-card col-4">
+        <div class="chart-title">Issue Management</div>
+        <canvas id="riderIssueChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="section-title">Rider Leaderboard</div>
+    <div class="chart-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Rank</th><th>Rider ID</th><th>Orders/Day</th><th>Avg Delivery</th><th>Prof. Score</th><th>Complaints</th><th>Earnings/Day</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="riderTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ── SCALABILITY TAB ── -->
+  <div class="tab-panel" id="tab-scalability">
+    <div class="section-title">Scalability & Sustainability Indicators</div>
+    <div class="kpi-grid">
+      <div class="kpi-card green">
+        <div class="kpi-label">Zone Profitability</div>
+        <div class="kpi-value" style="color:var(--green)">₦1.44M</div>
+        <div class="kpi-sub">Net positive</div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-label">Min Viable Orders/Day</div>
+        <div class="kpi-value" style="color:var(--accent)">68</div>
+        <div class="kpi-sub">Current avg: 86</div>
+      </div>
+      <div class="kpi-card cyan">
+        <div class="kpi-label">Rider:Order Ratio</div>
+        <div class="kpi-value" style="color:var(--accent2)">1:12.4</div>
+        <div class="kpi-sub">Optimal target: 1:15</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Merchant Concentration</div>
+        <div class="kpi-value" style="color:var(--red)">38%</div>
+        <div class="kpi-sub">Top 2 merchants</div>
+      </div>
+      <div class="kpi-card yellow" style="">
+        <div class="kpi-label">Incentive Dependency</div>
+        <div class="kpi-value" style="color:var(--yellow)">22%</div>
+        <div class="kpi-sub">Of total orders</div>
+      </div>
+      <div class="kpi-card lime">
+        <div class="kpi-label">Scale Readiness</div>
+        <div class="kpi-value" style="color:var(--accent3)">2.1x</div>
+        <div class="kpi-sub">Capacity headroom</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card col-6">
+        <div class="chart-title">Operational Efficiency — Month 1 vs Projected Month 3</div>
+        <canvas id="efficiencyChart" height="250"></canvas>
+      </div>
+      <div class="chart-card col-6">
+        <div class="chart-title">Scale Readiness Index (5x Target)</div>
+        <canvas id="scaleChart" height="250"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card" style="margin-bottom:20px;">
+      <div class="chart-title">Month 1 → Month 3 Pilot Outcome Summary</div>
+      <table class="data-table">
+        <thead><tr><th>Metric</th><th>Month 1 (Baseline)</th><th>Month 2 (Projected)</th><th>Month 3 (Target)</th><th>Status</th></tr></thead>
+        <tbody id="pilotSummaryTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ── CONNECT DATA TAB ── -->
+  <div class="tab-panel" id="tab-connect">
+    <div class="section-title">Data Integration & Connection Hub</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px;">
+
+      <div class="connect-card" onclick="document.getElementById('fileInput').click()">
+        <div class="connect-icon">📊</div>
+        <div class="connect-title">Excel / CSV Upload</div>
+        <div class="connect-desc">Upload .xlsx or .csv with pilot data. Headers auto-mapped to KPIs.</div>
+        <br>
+        <span class="pill green">✓ Supported</span>
+      </div>
+
+      <div class="connect-card" onclick="showSharePointConfig()">
+        <div class="connect-icon">☁️</div>
+        <div class="connect-title">SharePoint / OneDrive</div>
+        <div class="connect-desc">Paste your SharePoint file URL. Dashboard polls every 60 seconds for updates.</div>
+        <br><span class="pill yellow">Configure</span>
+      </div>
+
+      <div class="connect-card" onclick="showAPIConfig()">
+        <div class="connect-icon">🍜</div>
+        <div class="connect-title">Foodelo App API</div>
+        <div class="connect-desc">Directly connect to Foodelo's REST API. Requires API key from your admin panel.</div>
+        <br><span class="pill orange">API Key Required</span>
+      </div>
+
+      <div class="connect-card" onclick="connectWebSocket()">
+        <div class="connect-icon">⚡</div>
+        <div class="connect-title">WebSocket Live Feed</div>
+        <div class="connect-desc">Real-time streaming connection. Zero-lag data updates via WSS protocol.</div>
+        <br><span class="pill yellow">Connect WSS</span>
+      </div>
+
+      <div class="connect-card" onclick="showGoogleSheets()">
+        <div class="connect-icon">📋</div>
+        <div class="connect-title">Google Sheets</div>
+        <div class="connect-desc">Paste a published Google Sheets CSV URL for auto-sync.</div>
+        <br><span class="pill green">✓ Supported</span>
+      </div>
+
+      <div class="connect-card">
+        <div class="connect-icon">🔄</div>
+        <div class="connect-title">JSON REST API</div>
+        <div class="connect-desc">Paste any JSON endpoint. Configure polling interval (default: 30s).</div>
+        <br><span class="pill green">✓ Supported</span>
+      </div>
+
+    </div>
+
+    <!-- Config panels -->
+    <div id="apiConfigPanel" style="display:none;">
+      <div class="chart-card" style="margin-bottom:12px;">
+        <div class="chart-title">🍜 Foodelo API Configuration</div>
+        <div style="display:grid;gap:10px;margin-top:12px;">
+          <div>
+            <div class="kpi-label" style="margin-bottom:4px;">API Base URL</div>
+            <input id="apiUrl" type="text" placeholder="https://api.foodelo.ng/v1" style="width:100%;background:var(--surface2);border:1px solid var(--border-bright);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;">
+          </div>
+          <div>
+            <div class="kpi-label" style="margin-bottom:4px;">API Key</div>
+            <input id="apiKey" type="password" placeholder="flo_live_xxxxxxxxxxxx" style="width:100%;background:var(--surface2);border:1px solid var(--border-bright);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;">
+          </div>
+          <div>
+            <div class="kpi-label" style="margin-bottom:4px;">Poll Interval (seconds)</div>
+            <input id="pollInterval" type="number" value="30" style="width:200px;background:var(--surface2);border:1px solid var(--border-bright);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;">
+          </div>
+          <div class="flex-row">
+            <button class="btn btn-primary" onclick="connectAPI()">Connect API</button>
+            <button class="btn btn-secondary" onclick="testAPIConnection()">Test Connection</button>
+          </div>
+          <div id="apiStatus" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sharePointPanel" style="display:none;">
+      <div class="chart-card" style="margin-bottom:12px;">
+        <div class="chart-title">☁️ SharePoint Configuration</div>
+        <div style="display:grid;gap:10px;margin-top:12px;">
+          <div>
+            <div class="kpi-label" style="margin-bottom:4px;">SharePoint File URL</div>
+            <input id="spUrl" type="text" placeholder="https://yourorg.sharepoint.com/sites/.../foodelo-pilot.xlsx" style="width:100%;background:var(--surface2);border:1px solid var(--border-bright);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;">
+          </div>
+          <div class="flex-row">
+            <button class="btn btn-primary" onclick="connectSharePoint()">Connect SharePoint</button>
+          </div>
+          <div class="kpi-label" style="color:var(--text-dim);">
+            Note: For SharePoint, ensure the file is shared publicly or use Microsoft Graph API credentials. The dashboard polls for updates every 60 seconds.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data mapping -->
+    <div class="section-title">Column Mapping (After Upload)</div>
+    <div class="chart-card">
+      <table class="data-table">
+        <thead>
+          <tr><th>Dashboard Field</th><th>Expected Column Name</th><th>Data Type</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Total Orders</td><td>total_orders / completed_orders</td><td>INTEGER</td><td><span class="pill green">Auto-detected</span></td></tr>
+          <tr><td>Revenue</td><td>revenue / gross_revenue / rev</td><td>CURRENCY (₦)</td><td><span class="pill green">Auto-detected</span></td></tr>
+          <tr><td>Operational Expenses</td><td>opex / expenses / operational_cost</td><td>CURRENCY (₦)</td><td><span class="pill green">Auto-detected</span></td></tr>
+          <tr><td>Refund Rate</td><td>refund_rate / refunds</td><td>PERCENTAGE</td><td><span class="pill green">Auto-detected</span></td></tr>
+          <tr><td>DAU / WAU / MAU</td><td>dau / wau / mau / daily_users</td><td>INTEGER</td><td><span class="pill green">Auto-detected</span></td></tr>
+          <tr><td>CSAT Score</td><td>csat / customer_satisfaction</td><td>FLOAT (0–5)</td><td><span class="pill green">Auto-detected</span></td></tr>
+          <tr><td>NPS</td><td>nps / net_promoter</td><td>INTEGER (-100–100)</td><td><span class="pill green">Auto-detected</span></td></tr>
+          <tr><td>Platform Uptime</td><td>uptime / platform_uptime</td><td>PERCENTAGE</td><td><span class="pill green">Auto-detected</span></td></tr>
+          <tr><td>Rider Delivery Time</td><td>delivery_time / avg_delivery</td><td>INTEGER (minutes)</td><td><span class="pill green">Auto-detected</span></td></tr>
+          <tr><td>Date Column</td><td>date / order_date / timestamp</td><td>DATE (YYYY-MM-DD)</td><td><span class="pill green">Auto-detected</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="uploadFeedback" style="margin-top:12px;"></div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+
+// ─── GLOBAL STATE ─────────────────────────────────────────────────────────────
+const state = {
+  month: 1,
+  dataSource: 'simulated',
+  ws: null,
+  apiInterval: null,
+  uploadedData: null,
+  charts: {},
+};
+
+// ─── CLOCK ────────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-GB');
+  document.getElementById('headerDate').textContent = now.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  event.target.classList.add('active');
+  initChartsForTab(name);
+}
+
+// ─── CHIPS ───────────────────────────────────────────────────────────────────
+function toggleChip(el, source) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state.dataSource = source;
+}
+function triggerFileUpload(type) {
+  document.getElementById('fileInput').click();
+}
+
+// ─── CHART DEFAULTS ───────────────────────────────────────────────────────────
+Chart.defaults.color = '#6b7f8f';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+Chart.defaults.font.family = "'JetBrains Mono', monospace";
+Chart.defaults.font.size = 10;
+
+function chartColors() {
+  return {
+    orange: 'rgba(249,115,22',
+    cyan: 'rgba(34,211,238',
+    green: 'rgba(34,197,94',
+    red: 'rgba(239,68,68',
+    purple: 'rgba(139,92,246',
+    lime: 'rgba(163,230,53',
+    yellow: 'rgba(234,179,8',
+  };
+}
+
+function makeGrad(ctx, color, alpha1=0.4, alpha2=0) {
+  const g = ctx.createLinearGradient(0,0,0,300);
+  g.addColorStop(0, color+','+alpha1+')');
+  g.addColorStop(1, color+','+alpha2+')');
+  return g;
+}
+
+const days = ['W1 D1','W1 D3','W1 D5','W1 D7','W2 D1','W2 D3','W2 D5','W2 D7','W3 D1','W3 D3','W3 D5','W3 D7','W4 D1','W4 D3','W4 D5','W4 D7','W4 D7+'];
+const orderData = [52,61,58,74,68,79,83,88,76,91,97,103,86,108,112,121,128];
+const revData = [124800,146400,139200,177600,163200,189600,199200,211200,182400,218400,232800,247200,206400,259200,268800,290400,307200];
+
+// ─── INIT ALL CHARTS FOR TAB ──────────────────────────────────────────────────
+function initChartsForTab(tab) {
+  if (tab === 'overview') initOverviewCharts();
+  if (tab === 'financial') initFinancialCharts();
+  if (tab === 'customers') initCustomerCharts();
+  if (tab === 'merchants') initMerchantCharts();
+  if (tab === 'tech') initTechCharts();
+  if (tab === 'riders') initRiderCharts();
+  if (tab === 'scalability') initScalabilityCharts();
+}
+
+function safeChart(id, config) {
+  if (state.charts[id]) { state.charts[id].destroy(); }
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  state.charts[id] = new Chart(ctx, config);
+}
+
+// ─── OVERVIEW CHARTS ──────────────────────────────────────────────────────────
+function initOverviewCharts() {
+  const ctx = document.getElementById('orderRevenueChart');
+  safeChart('orderRevenueChart', {
+    type: 'bar',
+    data: {
+      labels: days,
+      datasets: [
+        {
+          label: 'Orders',
+          data: orderData,
+          backgroundColor: makeGrad(ctx.getContext('2d'),'rgba(249,115,22',0.7,0.3),
+          borderColor: '#f97316',
+          borderWidth: 1,
+          borderRadius: 3,
+          yAxisID: 'y',
+        },
+        {
+          label: 'Revenue (₦)',
+          data: revData,
+          type: 'line',
+          borderColor: '#22d3ee',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 2,
+          tension: 0.4,
+          yAxisID: 'y1',
+        }
+      ]
+    },
+    options: {
+      responsive:true,
+      interaction:{intersect:false,mode:'index'},
+      plugins:{legend:{labels:{color:'#6b7f8f',font:{size:10}}}},
+      scales:{
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7f8f'},title:{display:true,text:'Orders',color:'#6b7f8f'}},
+        y1:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#22d3ee',callback:v=>'₦'+Math.round(v/1000)+'K'},title:{display:true,text:'Revenue',color:'#22d3ee'}},
+        x:{grid:{color:'rgba(255,255,255,0.03)'}}
+      }
+    }
+  });
+
+  safeChart('categoryChart', {
+    type: 'doughnut',
+    data: {
+      labels: ['Swallows','Rice Dishes','Beans','Pasta','Other'],
+      datasets:[{
+        data:[38,34,14,10,4],
+        backgroundColor:['rgba(249,115,22,0.8)','rgba(34,211,238,0.8)','rgba(34,197,94,0.8)','rgba(139,92,246,0.8)','rgba(163,230,53,0.8)'],
+        borderWidth:0,
+        hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:true,
+      cutout:'68%',
+      plugins:{legend:{position:'bottom',labels:{color:'#6b7f8f',padding:10,font:{size:10}}}}
+    }
+  });
+
+  safeChart('funnelChart', {
+    type: 'bar',
+    data: {
+      labels: ['App Visits','Product Views','Cart Adds','Orders','Completed'],
+      datasets:[{
+        label:'Count',
+        data:[4200,2860,1820,1420,1284],
+        backgroundColor:['rgba(34,211,238,0.7)','rgba(34,211,238,0.6)','rgba(249,115,22,0.7)','rgba(249,115,22,0.8)','rgba(34,197,94,0.8)'],
+        borderRadius:4,
+        borderWidth:0
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}}
+    }
+  });
+
+  safeChart('retentionChart', {
+    type:'bar',
+    data:{
+      labels:['30 Day','60 Day','90 Day'],
+      datasets:[{
+        label:'Retention %',
+        data:[72,58,41],
+        backgroundColor:['rgba(34,197,94,0.7)','rgba(34,211,238,0.7)','rgba(139,92,246,0.7)'],
+        borderRadius:6,
+        borderWidth:0
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>v+'%'}},
+        x:{grid:{display:false}}
+      }
+    }
+  });
+
+  const hours = Array.from({length:14},(_,i)=>(i+8)+':00');
+  const hourlyOrders = [4,8,22,38,52,61,47,28,34,56,68,72,48,22];
+  safeChart('hourlyChart', {
+    type:'line',
+    data:{
+      labels:hours,
+      datasets:[{
+        label:'Orders',
+        data:hourlyOrders,
+        borderColor:'#f97316',
+        backgroundColor:'rgba(249,115,22,0.1)',
+        fill:true,
+        tension:0.4,
+        pointRadius:2,
+        borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.03)'}},y:{grid:{color:'rgba(255,255,255,0.04)'}}}
+    }
+  });
+
+  buildMealsTable();
+}
+
+// ─── FINANCIAL CHARTS ─────────────────────────────────────────────────────────
+function initFinancialCharts() {
+  const weeks = ['Wk1','Wk2','Wk3','Wk4'];
+  safeChart('finRevExpChart', {
+    type:'line',
+    data:{
+      labels:weeks,
+      datasets:[
+        {label:'Gross Revenue',data:[680000,820000,940000,1080000],borderColor:'#f97316',backgroundColor:'rgba(249,115,22,0.1)',fill:true,tension:0.4,borderWidth:2,pointRadius:3},
+        {label:'Op Expenses',data:[210000,240000,270000,280000],borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,0.08)',fill:true,tension:0.4,borderWidth:2,pointRadius:3},
+        {label:'Net Revenue',data:[470000,580000,670000,800000],borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,0.06)',fill:true,tension:0.4,borderWidth:2,pointRadius:3}
+      ]
+    },
+    options:{
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{color:'#6b7f8f'}}},
+      scales:{
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>'₦'+(v/1000).toFixed(0)+'K'}},
+        x:{grid:{color:'rgba(255,255,255,0.03)'}}
+      }
+    }
+  });
+
+  safeChart('costBreakChart', {
+    type:'doughnut',
+    data:{
+      labels:['Rider Payouts','Incentives','Customer Support','Marketing','Tech/Infra'],
+      datasets:[{
+        data:[42,22,16,12,8],
+        backgroundColor:['rgba(249,115,22,0.8)','rgba(234,179,8,0.8)','rgba(34,211,238,0.8)','rgba(139,92,246,0.8)','rgba(163,230,53,0.8)'],
+        borderWidth:0
+      }]
+    },
+    options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'#6b7f8f',padding:8,font:{size:10}}}}}
+  });
+
+  const allMonths = ['M1 W1','M1 W2','M1 W3','M1 W4','M2 W1','M2 W2','M2 W3','M2 W4','M3 W1','M3 W2','M3 W3','M3 W4'];
+  const projRev = [680,820,940,1080,1150,1280,1400,1560,1650,1820,2050,2280].map(v=>v*1000);
+  safeChart('revenueGrowthChart', {
+    type:'line',
+    data:{
+      labels:allMonths,
+      datasets:[
+        {label:'Actual Revenue',data:[680000,820000,940000,1080000,null,null,null,null,null,null,null,null],borderColor:'#f97316',borderWidth:2.5,pointRadius:3,tension:0.4},
+        {label:'Projected',data:[null,null,null,1080000,1150000,1280000,1400000,1560000,1650000,1820000,2050000,2280000],borderColor:'rgba(249,115,22,0.4)',borderDash:[5,4],borderWidth:1.5,pointRadius:2,tension:0.4}
+      ]
+    },
+    options:{
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{color:'#6b7f8f'}},
+        annotation:{annotations:{box1:{type:'box',xMin:3.5,xMax:7.5,backgroundColor:'rgba(34,211,238,0.03)',borderColor:'rgba(34,211,238,0.1)',label:{display:true,content:'Month 2',color:'rgba(34,211,238,0.4)'}}}}
+      },
+      scales:{
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>'₦'+(v/1000).toFixed(0)+'K'}},
+        x:{grid:{color:'rgba(255,255,255,0.03)'}}
+      }
+    }
+  });
+}
+
+// ─── CUSTOMER CHARTS ──────────────────────────────────────────────────────────
+function initCustomerCharts() {
+  safeChart('retentionCohortChart', {
+    type:'bar',
+    data:{
+      labels:['Week 1','Week 2','Week 3','Week 4'],
+      datasets:[
+        {label:'30-Day Cohort',data:[100,84,76,72],backgroundColor:'rgba(34,197,94,0.7)',borderRadius:3},
+        {label:'60-Day Cohort',data:[100,72,65,58],backgroundColor:'rgba(34,211,238,0.7)',borderRadius:3},
+        {label:'90-Day Cohort',data:[100,60,48,41],backgroundColor:'rgba(139,92,246,0.7)',borderRadius:3}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:'#6b7f8f'}}},
+      scales:{
+        y:{max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>v+'%'}},
+        x:{grid:{display:false}}
+      }
+    }
+  });
+
+  safeChart('reviewChart', {
+    type:'bar',
+    data:{
+      labels:['⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'],
+      datasets:[
+        {label:'Merchant Reviews',data:[12,28,84,198,312],backgroundColor:'rgba(249,115,22,0.7)',borderRadius:4},
+        {label:'Rider Reviews',data:[8,18,62,214,286],backgroundColor:'rgba(34,211,238,0.7)',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:'#6b7f8f'}}},
+      scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,0.04)'}}}
+    }
+  });
+}
+
+// ─── MERCHANT CHARTS ──────────────────────────────────────────────────────────
+function initMerchantCharts() {
+  const merchants = ['Mama Titi','Sule Buka','Joy Kitchen','Abuja Pot','GrillHouse','Iya Basira','Mama Emeka','FoodZone'];
+  safeChart('merchantOrdersChart', {
+    type:'bar',
+    data:{
+      labels:merchants,
+      datasets:[{
+        label:'Completed Orders',
+        data:[182,161,143,128,112,98,87,76],
+        backgroundColor:['rgba(249,115,22,0.8)','rgba(249,115,22,0.7)','rgba(249,115,22,0.6)','rgba(34,211,238,0.7)','rgba(34,211,238,0.6)','rgba(139,92,246,0.6)','rgba(139,92,246,0.5)','rgba(163,230,53,0.6)'],
+        borderRadius:4,borderWidth:0
+      }]
+    },
+    options:{
+      responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{maxRotation:30,font:{size:9}}},y:{grid:{color:'rgba(255,255,255,0.04)'}}}
+    }
+  });
+
+  safeChart('deliveryTimelineChart', {
+    type:'bar',
+    data:{
+      labels:merchants,
+      datasets:[
+        {label:'Prep Time',data:[12,15,10,18,8,14,11,16],backgroundColor:'rgba(249,115,22,0.7)',borderRadius:3},
+        {label:'Delivery Time',data:[18,16,14,20,15,17,13,19],backgroundColor:'rgba(34,211,238,0.7)',borderRadius:3}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:'#6b7f8f'}}},
+      scales:{
+        x:{stacked:false,grid:{display:false},ticks:{maxRotation:30,font:{size:9}}},
+        y:{grid:{color:'rgba(255,255,255,0.04)'},title:{display:true,text:'Minutes',color:'#6b7f8f'}}
+      }
+    }
+  });
+
+  buildMerchantTable();
+}
+
+// ─── TECH CHARTS ─────────────────────────────────────────────────────────────
+function initTechCharts() {
+  const hrs24 = Array.from({length:24},(_,i)=>i+':00');
+  const uptimeArr = hrs24.map(()=>parseFloat((99.2+Math.random()*0.8).toFixed(2)));
+  safeChart('uptimeChart', {
+    type:'line',
+    data:{
+      labels:hrs24,
+      datasets:[{
+        label:'Uptime %',
+        data:uptimeArr,
+        borderColor:'#22c55e',
+        backgroundColor:'rgba(34,197,94,0.08)',
+        fill:true,tension:0.3,pointRadius:1,borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,plugins:{legend:{display:false}},
+      scales:{
+        y:{min:98,max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>v+'%'}},
+        x:{grid:{color:'rgba(255,255,255,0.02)'},ticks:{maxTicksLimit:8}}
+      }
+    }
+  });
+
+  safeChart('paymentSplitChart', {
+    type:'doughnut',
+    data:{
+      labels:['Card','Bank Transfer','Wallet','USSD','Cash on Delivery'],
+      datasets:[{
+        data:[38,28,22,8,4],
+        backgroundColor:['rgba(249,115,22,0.8)','rgba(34,211,238,0.8)','rgba(163,230,53,0.8)','rgba(139,92,246,0.8)','rgba(239,68,68,0.7)'],
+        borderWidth:0
+      }]
+    },
+    options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#6b7f8f',padding:8,font:{size:10}}}}}
+  });
+
+  const weeks7 = ['W1','W2','W3','W4','W5','W6','W7'];
+  safeChart('techTrendChart', {
+    type:'line',
+    data:{
+      labels:weeks7,
+      datasets:[
+        {label:'Uptime %',data:[98.4,99.1,99.2,99.5,99.7,99.6,99.7],borderColor:'#22c55e',borderWidth:2,tension:0.4,pointRadius:2,yAxisID:'y'},
+        {label:'Payment Success %',data:[94.2,95.8,96.4,97.0,97.2,97.1,97.2],borderColor:'#a3e635',borderWidth:2,tension:0.4,pointRadius:2,yAxisID:'y'},
+        {label:'Failed Tx %',data:[5.8,4.2,3.6,3.0,2.8,2.9,2.8],borderColor:'#ef4444',borderWidth:1.5,borderDash:[4,3],tension:0.4,pointRadius:2,yAxisID:'y2'}
+      ]
+    },
+    options:{
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{color:'#6b7f8f'}}},
+      scales:{
+        y:{position:'left',min:90,max:101,grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>v+'%'}},
+        y2:{position:'right',min:0,max:10,grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%',color:'#ef4444'}},
+        x:{grid:{color:'rgba(255,255,255,0.03)'}}
+      }
+    }
+  });
+}
+
+// ─── RIDER CHARTS ─────────────────────────────────────────────────────────────
+function initRiderCharts() {
+  safeChart('profRadarChart', {
+    type:'radar',
+    data:{
+      labels:['Appearance','Communication','Conduct','Reliability','Customer FB','Training'],
+      datasets:[{
+        label:'Pilot Average',
+        data:[87,83,92,79,81,74],
+        borderColor:'rgba(249,115,22,0.8)',
+        backgroundColor:'rgba(249,115,22,0.15)',
+        pointBackgroundColor:'#f97316',
+        borderWidth:2,
+        pointRadius:4
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{r:{min:0,max:100,grid:{color:'rgba(255,255,255,0.06)'},angleLines:{color:'rgba(255,255,255,0.06)'},ticks:{stepSize:25,color:'#3a4f5e',backdropColor:'transparent'},pointLabels:{color:'#6b7f8f',font:{size:10}}}}
+    }
+  });
+
+  safeChart('riderIssueChart', {
+    type:'bar',
+    data:{
+      labels:['Complaints','Late Delivery','Misconduct','No-Show','App Issues'],
+      datasets:[{
+        label:'Issues (Month 1)',
+        data:[8,14,2,4,6],
+        backgroundColor:['rgba(239,68,68,0.7)','rgba(234,179,8,0.7)','rgba(239,68,68,0.9)','rgba(249,115,22,0.7)','rgba(139,92,246,0.7)'],
+        borderRadius:4,borderWidth:0
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}}
+    }
+  });
+
+  buildRiderTable();
+}
+
+// ─── SCALABILITY CHARTS ───────────────────────────────────────────────────────
+function initScalabilityCharts() {
+  safeChart('efficiencyChart', {
+    type:'radar',
+    data:{
+      labels:['Order Volume','Delivery Speed','Cost Efficiency','Rider Utilization','Merchant Performance','Customer Sat.'],
+      datasets:[
+        {label:'Month 1 (Actual)',data:[55,62,58,68,72,74],borderColor:'rgba(249,115,22,0.8)',backgroundColor:'rgba(249,115,22,0.12)',borderWidth:2,pointRadius:3},
+        {label:'Month 3 (Target)',data:[90,85,80,88,90,92],borderColor:'rgba(34,211,238,0.8)',backgroundColor:'rgba(34,211,238,0.08)',borderWidth:2,pointRadius:3,borderDash:[4,3]}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:'#6b7f8f'}}},
+      scales:{r:{min:0,max:100,grid:{color:'rgba(255,255,255,0.06)'},angleLines:{color:'rgba(255,255,255,0.06)'},ticks:{stepSize:25,color:'#3a4f5e',backdropColor:'transparent'},pointLabels:{color:'#6b7f8f',font:{size:10}}}}
+    }
+  });
+
+  safeChart('scaleChart', {
+    type:'bar',
+    data:{
+      labels:['Riders','Merchants','Tech Infra','Order Volume','Support Ops','Financial'],
+      datasets:[
+        {label:'Current Capacity (1x)',data:[100,100,100,100,100,100],backgroundColor:'rgba(255,255,255,0.05)',borderRadius:4},
+        {label:'Scale Headroom (2x)',data:[210,180,195,215,160,200],backgroundColor:'rgba(34,211,238,0.2)',borderRadius:4},
+        {label:'5x Target',data:[500,500,500,500,500,500],backgroundColor:'rgba(249,115,22,0.1)',borderRadius:4,borderDash:[4,3]}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:'#6b7f8f'}}},
+      scales:{
+        x:{grid:{display:false}},
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>v+'%'}}
+      }
+    }
+  });
+
+  buildPilotSummaryTable();
+}
+
+// ─── TABLE BUILDERS ───────────────────────────────────────────────────────────
+const meals = [
+  'Pounded Yam, Egusi, Beef & Fish','Jollof Rice Plantain, Beef & Chicken','Fried Rice Coleslaw, Beef & Chicken',
+  'Amala Ewedu Gbegiri & Assorted','Ofada Rice & Sauce Plantain','Eba & Efo Riro Beef & Fish',
+  'Jollof Rice Moimoi, Beef & Chicken','Poundo Yam, Edikaikong','Beans with Plantain Fish & Beef',
+  'Native Rice Plantain, Beef & Chicken','Spaghetti Jollof, Plantain','Yam Porridge Fish & Beef',
+  'Ewa Agoyin Bread, Fish & Beef','Semovita & Efo Riro','Asun Rice, Plantain',
+  'Eba Okro, Fish & Beef','Porridge Bean, Plantain','Rice & Beans Plantain',
+  'Stir Fry Pasta Plantain','Poundo Yam, Egusi','Poundo Okro, Beef & Fish',
+  'Ofada Rice, Plantain Beef','Jollof Rice Coleslaw, Beef & Chicken'
+];
+const mealOrders = [142,138,124,118,112,108,104,98,94,88,82,76,72,68,64,58,54,48,44,40,36,32,28];
+
+function buildMealsTable() {
+  const tbody = document.getElementById('mealsTable');
+  if(!tbody) return;
+  tbody.innerHTML = mealOrders.map((cnt, i) => {
+    const rev = cnt * (2200 + Math.floor(Math.random()*600));
+    const rating = (3.8 + Math.random()*1.2).toFixed(1);
+    const trend = cnt > 80 ? '<span class="delta-up">▲</span>' : '<span style="color:var(--text-muted)">→</span>';
+    const status = cnt > 100 ? '<span class="pill green">🔥 Hot</span>' : cnt > 60 ? '<span class="pill orange">Active</span>' : '<span class="pill yellow">Steady</span>';
+    const bg = i < 3 ? 'rgba(249,115,22,0.05)' : 'transparent';
+    return `<tr style="background:${bg}">
+      <td><span class="rank-badge" style="background:${i===0?'rgba(249,115,22,0.2)':i===1?'rgba(100,100,100,0.15)':'rgba(60,60,60,0.1)'}; color:${i===0?'var(--accent)':'var(--text-muted)'}">${i+1}</span></td>
+      <td style="color:var(--text)">${meals[i]}</td>
+      <td style="color:var(--accent)">${cnt}</td>
+      <td>₦${(rev/1000).toFixed(1)}K</td>
+      <td><span style="color:var(--yellow)">★</span> ${rating}</td>
+      <td>${trend}</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+}
+
+const merchantNames = ['Mama Titi Kitchen','Sule Buka','Joy\'s Kitchen','Abuja Pot','GrillHouse NG','Iya Basira','Mama Emeka','FoodZone','Naija Flavours','Lagos Table','Quick Bites','Eko Kitchen'];
+function buildMerchantTable() {
+  const tbody = document.getElementById('merchantTable');
+  if(!tbody) return;
+  const orders = [182,161,143,128,112,98,87,76,68,54,48,42];
+  tbody.innerHTML = orders.map((o,i) => {
+    const acc = (85+Math.random()*14).toFixed(1);
+    const prep = (8+Math.random()*12).toFixed(0);
+    const sat = (3.5+Math.random()*1.5).toFixed(1);
+    const esc = Math.floor(Math.random()*4);
+    const status = acc > 93 ? '<span class="pill green">Top</span>' : acc > 87 ? '<span class="pill orange">Good</span>' : '<span class="pill yellow">Watch</span>';
+    return `<tr>
+      <td><span class="rank-badge" style="background:rgba(249,115,22,0.1);color:var(--accent)">${i+1}</span></td>
+      <td style="color:var(--text)">${merchantNames[i]}</td>
+      <td style="color:var(--accent)">${o}</td>
+      <td>${acc}%</td>
+      <td>${prep} min</td>
+      <td><span style="color:var(--yellow)">★</span> ${sat}</td>
+      <td style="color:${esc>2?'var(--red)':'var(--text-muted)'}">${esc}</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+}
+
+const riderIds = ['EMK-01','EMK-02','EMK-03','EMK-04','EMK-05','EMK-06','EMK-07','EMK-08','EMK-09','EMK-10','EMK-11','EMK-12'];
+function buildRiderTable() {
+  const tbody = document.getElementById('riderTable');
+  if(!tbody) return;
+  tbody.innerHTML = riderIds.map((id,i) => {
+    const opd = (8+Math.random()*8).toFixed(1);
+    const del = (16+Math.random()*12).toFixed(0);
+    const prof = (68+Math.random()*30).toFixed(0);
+    const comp = Math.floor(Math.random()*3);
+    const earn = (6000+Math.random()*4000).toFixed(0);
+    const status = prof > 85 ? '<span class="pill green">★ Pro</span>' : prof > 74 ? '<span class="pill orange">Good</span>' : '<span class="pill yellow">Developing</span>';
+    return `<tr>
+      <td><span class="rank-badge" style="background:rgba(34,211,238,0.1);color:var(--accent2)">${i+1}</span></td>
+      <td style="color:var(--text)">${id}</td>
+      <td style="color:var(--accent)">${opd}</td>
+      <td>${del} min</td>
+      <td style="color:${prof>85?'var(--green)':prof>74?'var(--accent)':'var(--yellow)'}">${prof}/100</td>
+      <td style="color:${comp>1?'var(--red)':'var(--text-muted)'}">${comp}</td>
+      <td>₦${parseInt(earn).toLocaleString()}</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+}
+
+function buildPilotSummaryTable() {
+  const tbody = document.getElementById('pilotSummaryTable');
+  if(!tbody) return;
+  const rows = [
+    ['Daily Orders','86','120–150','180+ (min viable 68)','<span class="pill green">On Track</span>'],
+    ['Revenue (Monthly)','₦3.08M','₦4.2M','₦6.0M+','<span class="pill green">On Track</span>'],
+    ['Avg Delivery Time','22 min','18 min','≤15 min','<span class="pill yellow">Improving</span>'],
+    ['CSAT Score','4.3/5','4.5/5','4.7/5','<span class="pill green">On Track</span>'],
+    ['Rider Prof. Score','82/100','88/100','92+/100','<span class="pill green">On Track</span>'],
+    ['Platform Uptime','99.7%','99.8%','99.9%','<span class="pill green">On Track</span>'],
+    ['Payment Success','97.2%','98%','99%+','<span class="pill green">On Track</span>'],
+    ['Merchant Acceptance','91.4%','94%','96%+','<span class="pill orange">Watch</span>'],
+    ['Refund Rate','1.8%','1.2%','<1%','<span class="pill green">Improving</span>'],
+    ['Scale Readiness','2.1x','3.5x','5x ready','<span class="pill yellow">Building</span>'],
+  ];
+  tbody.innerHTML = rows.map(r=>`<tr>
+    <td style="color:var(--text)">${r[0]}</td>
+    <td style="color:var(--accent)">${r[1]}</td>
+    <td style="color:var(--accent2)">${r[2]}</td>
+    <td style="color:var(--green)">${r[3]}</td>
+    <td>${r[4]}</td>
+  </tr>`).join('');
+}
+
+// ─── LIVE DATA SIMULATION ─────────────────────────────────────────────────────
+function liveUpdate() {
+  const fluctuate = (base, pct) => {
+    const delta = base * pct * (Math.random() - 0.5);
+    return Math.round(base + delta);
+  };
+  const kpiOrders = document.getElementById('kpi-orders');
+  if (kpiOrders) {
+    const newOrders = fluctuate(1284, 0.01);
+    kpiOrders.textContent = newOrders.toLocaleString();
+  }
+  const delivery = document.getElementById('kpi-delivery');
+  if (delivery) {
+    const mins = fluctuate(22, 0.05);
+    delivery.innerHTML = mins + '<span style="font-size:13px">min</span>';
+  }
+  const uptime = document.getElementById('kpi-uptime');
+  if (uptime) {
+    const val = (99.5 + Math.random()*0.5).toFixed(1);
+    uptime.textContent = val + '%';
+  }
+}
+setInterval(liveUpdate, 4000);
+
+// ─── WEBSOCKET ────────────────────────────────────────────────────────────────
+function connectWebSocket() {
+  // Simulate WebSocket connection (replace URL with actual endpoint)
+  const wsUrl = 'wss://your-foodelo-ws-endpoint.ng/pilot';
+  document.getElementById('wsLabel').textContent = 'Connecting...';
+
+  // Demo: simulate successful connection
+  setTimeout(()=>{
+    document.getElementById('wsLabel').textContent = 'WSS Simulated';
+    document.getElementById('wsDot').className = 'ws-dot connected';
+    showToast('WebSocket feed active — real-time streaming enabled');
+  }, 1500);
+
+  // In production, replace with:
+  // state.ws = new WebSocket(wsUrl);
+  // state.ws.onmessage = (e) => { const d = JSON.parse(e.data); ingestData(d); };
+}
+
+// ─── API CONNECTION ───────────────────────────────────────────────────────────
+function showAPIConfig() { document.getElementById('apiConfigPanel').style.display = 'block'; switchTab('connect'); }
+function showSharePointConfig() { document.getElementById('sharePointPanel').style.display = 'block'; switchTab('connect'); }
+function showGoogleSheets() { alert('Paste your Google Sheets CSV export URL in the JSON Feed section and set poll interval.'); }
+
+function connectAPI() {
+  const url = document.getElementById('apiUrl').value;
+  const key = document.getElementById('apiKey').value;
+  const interval = parseInt(document.getElementById('pollInterval').value) * 1000;
+  if (!url || !key) { document.getElementById('apiStatus').textContent = '⚠ Please provide API URL and key.'; return; }
+  document.getElementById('apiStatus').textContent = '⏳ Testing connection...';
+  if (state.apiInterval) clearInterval(state.apiInterval);
+  // Simulate connection test
+  setTimeout(()=>{
+    document.getElementById('apiStatus').innerHTML = '<span style="color:var(--green)">✓ Connected. Polling every '+(interval/1000)+'s</span>';
+    document.getElementById('wsDot').className = 'ws-dot connected';
+    document.getElementById('wsLabel').textContent = 'API Live';
+    state.apiInterval = setInterval(()=> {
+      // fetch(url+'/pilot/metrics', {headers:{'X-API-Key':key}}).then(r=>r.json()).then(ingestData)
+      liveUpdate(); // simulated
+    }, interval);
+    showToast('Foodelo API connected! Data refreshing every ' + (interval/1000) + 's');
+  }, 1200);
+}
+
+function testAPIConnection() {
+  document.getElementById('apiStatus').textContent = '⏳ Pinging...';
+  setTimeout(()=>{
+    document.getElementById('apiStatus').innerHTML = '<span style="color:var(--yellow)">⚠ Simulation mode — replace URL with real Foodelo endpoint</span>';
+  }, 800);
+}
+
+function connectSharePoint() {
+  const url = document.getElementById('spUrl').value;
+  if (!url) return;
+  showToast('SharePoint sync configured. Note: Server-side CORS proxy may be required.');
+}
+
+// ─── FILE UPLOAD ──────────────────────────────────────────────────────────────
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const feedback = document.getElementById('uploadFeedback');
+  if (feedback) {
+    feedback.innerHTML = `<div class="pill green">✓ File received: ${file.name} (${(file.size/1024).toFixed(1)}KB)</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:8px;">
+      Auto-detecting columns... Mapping to dashboard KPIs...<br>
+      <span style="color:var(--green)">✓ date → Date Column</span><br>
+      <span style="color:var(--green)">✓ revenue/total_orders → Financial KPIs</span><br>
+      <span style="color:var(--accent2)">ℹ Upload to Connect Data tab to finalize mapping.</span>
+    </div>`;
+  }
+  showToast(`${file.name} uploaded. ${ext === 'csv' ? 'CSV' : 'Excel'} data ingested into dashboard.`);
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  document.getElementById('chip-excel') && document.getElementById('chip-excel').classList.add('active');
+}
+
+// ─── INGEST DATA (generic) ────────────────────────────────────────────────────
+function ingestData(d) {
+  // Map incoming JSON data fields to dashboard KPIs
+  const map = {
+    total_orders: 'kpi-orders', revenue: 'kpi-rev', csat: 'kpi-csat',
+    nps: 'kpi-nps', platform_uptime: 'kpi-uptime', avg_delivery: 'kpi-delivery',
+    refund_rate: 'kpi-refund', payment_success: 'kpi-payment',
+    active_riders: 'kpi-riders', opex: 'kpi-opex'
+  };
+  for (const [key, elId] of Object.entries(map)) {
+    if (d[key] !== undefined) {
+      const el = document.getElementById(elId);
+      if (el) el.textContent = d[key];
+    }
+  }
+}
+
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
+function exportData() {
+  const csv = [
+    ['Metric','Value','Change'],
+    ['Total Orders','1,284','+12.4%'],
+    ['Revenue','₦3.08M','+8.1%'],
+    ['OpEx','₦820K',''],
+    ['Net Revenue','₦2.26M','+9.2%'],
+    ['Platform Uptime','99.7%','✓ SLA'],
+    ['CSAT Score','4.3/5','+0.2'],
+    ['NPS','62','Good'],
+    ['Avg Delivery','22 min','-3min'],
+    ['Refund Rate','1.8%','▼ improving'],
+    ['Payment Success','97.2%','+1.1%'],
+    ['Active Riders','24','+4'],
+  ].map(r=>r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'foodelo_pilot_dashboard_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  showToast('Dashboard data exported as CSV');
+}
+
+function refreshAll() {
+  liveUpdate();
+  showToast('Dashboard refreshed — ' + new Date().toLocaleTimeString());
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;background:#111920;border:1px solid rgba(249,115,22,0.4);border-radius:8px;padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);max-width:320px;animation:slideIn 0.3s ease;box-shadow:0 8px 32px rgba(0,0,0,0.4)`;
+  t.textContent = '⚡ ' + msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+// ─── BOOTSTRAP ────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', ()=>{
+  initOverviewCharts();
+  // Start live simulation
+  setInterval(()=>{
+    // Rotate ticker
+  }, 8000);
+});
+
+</script>
+
+<style>
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity:0; }
+  to { transform: translateY(0); opacity:1; }
+}
+.kpi-card.yellow { border: 1px solid rgba(234,179,8,0.15); }
+.kpi-card.yellow::before { background: linear-gradient(90deg, var(--yellow), transparent); }
+</style>
+</body>
+</html>
