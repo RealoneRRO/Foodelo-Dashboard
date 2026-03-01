@@ -593,9 +593,415 @@
     .summary-grid { grid-template-columns:1fr; }
     .pilot-track { flex-direction:column; }
   }
+
+  /* ══ LOGIN SCREEN ══════════════════════════════════════════════════════════ */
+  #loginScreen {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #080c10;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  #loginScreen::before {
+    content:'';
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(249,115,22,0.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(249,115,22,0.04) 1px,transparent 1px);
+    background-size:40px 40px;
+    animation: gridDrift 20s linear infinite;
+  }
+  @keyframes gridDrift {
+    0%{background-position:0 0}
+    100%{background-position:40px 40px}
+  }
+  .login-box {
+    position:relative; z-index:1;
+    background: rgba(13,19,24,0.95);
+    border: 1px solid rgba(249,115,22,0.2);
+    border-radius: 16px;
+    padding: 44px 48px;
+    width: 100%; max-width: 420px;
+    box-shadow: 0 0 80px rgba(249,115,22,0.08), 0 32px 64px rgba(0,0,0,0.6);
+    animation: loginFadeIn 0.6s ease;
+  }
+  @keyframes loginFadeIn {
+    from{opacity:0;transform:translateY(24px) scale(0.98)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+  }
+  .login-logo {
+    display:flex;align-items:center;gap:12px;
+    margin-bottom:32px;
+  }
+  .login-logo-icon {
+    width:48px;height:48px;
+    background:linear-gradient(135deg,#f97316,#dc2626);
+    border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;
+    box-shadow:0 8px 24px rgba(249,115,22,0.3);
+  }
+  .login-logo-text {
+    font-family:'Syne',sans-serif;
+    font-size:22px; font-weight:800;
+    letter-spacing:-0.5px;
+    color:#e8edf2;
+  }
+  .login-logo-text span{color:#f97316;}
+  .login-title {
+    font-family:'Syne',sans-serif;
+    font-size:15px; font-weight:700;
+    color:#e8edf2; margin-bottom:4px;
+  }
+  .login-sub {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; color:#6b7f8f;
+    margin-bottom:28px;
+    text-transform:uppercase; letter-spacing:1px;
+  }
+  .login-field {
+    margin-bottom:14px;
+  }
+  .login-field label {
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px; color:#6b7f8f;
+    text-transform:uppercase; letter-spacing:1px;
+    margin-bottom:6px;
+  }
+  .login-field input {
+    width:100%;
+    background:#111920;
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:8px;
+    color:#e8edf2;
+    padding:11px 14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    outline:none;
+    transition:border-color 0.2s, box-shadow 0.2s;
+  }
+  .login-field input:focus {
+    border-color:rgba(249,115,22,0.5);
+    box-shadow:0 0 0 3px rgba(249,115,22,0.08);
+  }
+  .login-field input::placeholder{color:#3a4f5e;}
+  .login-btn {
+    width:100%;
+    margin-top:8px;
+    padding:12px;
+    background:linear-gradient(135deg,#f97316,#dc2626);
+    border:none; border-radius:8px;
+    color:#fff;
+    font-family:'Syne',sans-serif;
+    font-size:13px; font-weight:700;
+    cursor:pointer;
+    transition:all 0.2s;
+    box-shadow:0 4px 20px rgba(249,115,22,0.25);
+    letter-spacing:0.5px;
+  }
+  .login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(249,115,22,0.35);}
+  .login-btn:active{transform:translateY(0);}
+  .login-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+  .login-error {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; color:#ef4444;
+    text-align:center; margin-top:10px;
+    min-height:16px;
+    animation: errShake 0.3s ease;
+  }
+  @keyframes errShake {
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-6px)}
+    75%{transform:translateX(6px)}
+  }
+  .login-divider {
+    display:flex;align-items:center;gap:10px;
+    margin:20px 0;
+  }
+  .login-divider::before,.login-divider::after {
+    content:'';flex:1;height:1px;background:rgba(255,255,255,0.06);
+  }
+  .login-divider span {
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px; color:#3a4f5e; text-transform:uppercase;
+  }
+  .login-roles {
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;
+    margin-bottom:20px;
+  }
+  .role-btn {
+    padding:8px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:8px;
+    cursor:pointer;
+    text-align:center;
+    transition:all 0.2s;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .role-btn:hover{border-color:rgba(249,115,22,0.3);background:rgba(249,115,22,0.05);}
+  .role-btn.selected{border-color:rgba(249,115,22,0.5);background:rgba(249,115,22,0.08);}
+  .role-btn .role-icon{font-size:18px;margin-bottom:3px;}
+  .role-btn .role-name{font-size:9px;color:#6b7f8f;text-transform:uppercase;letter-spacing:0.5px;}
+  .role-btn.selected .role-name{color:#f97316;}
+  .login-footer {
+    margin-top:20px;text-align:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px; color:#3a4f5e;
+  }
+  .login-footer span{color:#6b7f8f;}
+  .login-screen-exit {
+    animation: loginExit 0.4s ease forwards;
+  }
+  @keyframes loginExit {
+    to{opacity:0;transform:scale(1.03);pointer-events:none;}
+  }
+  /* Role badge in header */
+  .role-badge {
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    padding:3px 9px;
+    border-radius:4px;
+    background:rgba(139,92,246,0.15);
+    border:1px solid rgba(139,92,246,0.3);
+    color:#8b5cf6;
+  }
+  /* Session timer */
+  .session-timer {
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px; color:#3a4f5e;
+  }
+
+  /* ══ ADMIN PANEL OVERLAY ═══════════════════════════════════════════════════ */
+  #adminOverlay {
+    display:none;
+    position:fixed;inset:0;z-index:8000;
+    background:rgba(8,12,16,0.92);
+    backdrop-filter:blur(10px);
+    overflow-y:auto;
+    padding:20px;
+  }
+  .admin-panel {
+    max-width:940px;margin:0 auto;
+    background:var(--surface);
+    border:1px solid rgba(139,92,246,0.3);
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 0 80px rgba(139,92,246,0.1), 0 32px 64px rgba(0,0,0,0.5);
+    animation:adminSlideIn 0.35s ease;
+  }
+  @keyframes adminSlideIn {
+    from{opacity:0;transform:translateY(30px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .admin-header {
+    background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(249,115,22,0.1));
+    border-bottom:1px solid rgba(139,92,246,0.2);
+    padding:20px 28px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .admin-header-left {display:flex;align-items:center;gap:14px;}
+  .admin-header-icon {
+    width:44px;height:44px;
+    background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+  }
+  .admin-title {
+    font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
+    color:var(--text);
+  }
+  .admin-sub {
+    font-family:'JetBrains Mono',monospace;font-size:9px;
+    color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;
+  }
+  .admin-close {
+    background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);
+    color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px;
+    padding:8px 16px;border-radius:8px;cursor:pointer;transition:all 0.2s;
+  }
+  .admin-close:hover{background:rgba(239,68,68,0.2);}
+  .admin-tabs {
+    display:flex;border-bottom:1px solid var(--border);
+    background:var(--surface2);overflow-x:auto;
+  }
+  .admin-tab {
+    padding:12px 20px;font-family:'Syne',sans-serif;font-size:11px;
+    font-weight:700;color:var(--text-muted);cursor:pointer;
+    border-bottom:2px solid transparent;white-space:nowrap;
+    transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none;
+  }
+  .admin-tab:hover{color:var(--text);}
+  .admin-tab.active{color:var(--accent5);border-bottom-color:var(--accent5);}
+  .admin-body {padding:24px 28px;}
+  .admin-section {display:none;}
+  .admin-section.active{display:block;}
+  .admin-card {
+    background:var(--surface2);border:1px solid var(--border);
+    border-radius:10px;padding:18px 20px;margin-bottom:14px;
+  }
+  .admin-card-title {
+    font-family:'Syne',sans-serif;font-size:12px;font-weight:700;
+    color:var(--text);margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .admin-label {
+    font-family:'JetBrains Mono',monospace;font-size:9px;
+    color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;
+    margin-bottom:5px;display:block;
+  }
+  .admin-input {
+    width:100%;background:var(--surface);
+    border:1px solid var(--border-bright);
+    color:var(--text);padding:9px 13px;border-radius:7px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;
+    transition:border-color 0.2s;margin-bottom:10px;
+  }
+  .admin-input:focus{border-color:rgba(139,92,246,0.5);}
+  .admin-input-row {display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .admin-input-row3 {display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .admin-save-btn {
+    background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+    border:none;border-radius:8px;color:#fff;
+    font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+    padding:9px 20px;cursor:pointer;transition:all 0.2s;
+    box-shadow:0 4px 16px rgba(139,92,246,0.25);
+  }
+  .admin-save-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(139,92,246,0.35);}
+  .admin-danger-btn {
+    background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);
+    color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:10px;
+    padding:7px 14px;border-radius:7px;cursor:pointer;transition:all 0.2s;
+  }
+  .admin-danger-btn:hover{background:rgba(239,68,68,0.2);}
+  .admin-success {
+    font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);
+    margin-top:8px;display:none;
+  }
+  .admin-grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .admin-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .user-row {
+    display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;
+    align-items:center;margin-bottom:8px;
+  }
+  .status-dot-admin {
+    width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;
+  }
+  .conn-status {
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    padding:4px 10px;border-radius:4px;display:inline-block;
+  }
+  .conn-status.connected{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
+  .conn-status.disconnected{background:rgba(107,127,143,0.1);color:var(--text-muted);border:1px solid var(--border);}
+  .conn-status.testing{background:rgba(234,179,8,0.1);color:var(--yellow);border:1px solid rgba(234,179,8,0.2);}
+  .admin-toggle {
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 0;border-bottom:1px solid var(--border);
+  }
+  .admin-toggle:last-child{border-bottom:none;}
+  .toggle-label {font-family:'Instrument Sans',sans-serif;font-size:12px;color:var(--text);}
+  .toggle-sub {font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-top:2px;}
+  .toggle-switch {
+    position:relative;width:40px;height:22px;flex-shrink:0;
+  }
+  .toggle-switch input{opacity:0;width:0;height:0;}
+  .toggle-slider {
+    position:absolute;inset:0;background:var(--surface2);
+    border:1px solid var(--border-bright);border-radius:22px;cursor:pointer;
+    transition:all 0.3s;
+  }
+  .toggle-slider:before {
+    content:'';position:absolute;
+    width:16px;height:16px;left:2px;top:2px;
+    background:var(--text-muted);border-radius:50%;transition:all 0.3s;
+  }
+  .toggle-switch input:checked + .toggle-slider{background:rgba(139,92,246,0.3);border-color:var(--accent5);}
+  .toggle-switch input:checked + .toggle-slider:before{transform:translateX(18px);background:var(--accent5);}
+  select.admin-input{cursor:pointer;}
+  @media(max-width:700px){
+    .admin-input-row,.admin-input-row3,.admin-grid2,.admin-grid3{grid-template-columns:1fr;}
+    .user-row{grid-template-columns:1fr 1fr;gap:6px;}
+    .admin-body{padding:16px;}
+  }
 </style>
 </head>
 <body>
+
+<!-- ══ LOGIN SCREEN ══════════════════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">🍜</div>
+      <div>
+        <div class="login-logo-text">Foodelo <span>Pilot</span></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#3a4f5e;letter-spacing:1px;text-transform:uppercase;">Executive Command Dashboard</div>
+      </div>
+    </div>
+
+    <div class="login-title">Restricted Access</div>
+    <div class="login-sub">Authorized Personnel Only · 3-Month Pilot Program</div>
+
+    <div style="margin-bottom:16px;">
+      <div class="kpi-label" style="margin-bottom:8px;font-size:9px;">Select your role</div>
+      <div class="login-roles">
+        <div class="role-btn selected" onclick="selectRole(this,'Executive')" data-role="Executive">
+          <div class="role-icon">👔</div>
+          <div class="role-name">Executive</div>
+        </div>
+        <div class="role-btn" onclick="selectRole(this,'Operations')" data-role="Operations">
+          <div class="role-icon">⚙️</div>
+          <div class="role-name">Operations</div>
+        </div>
+        <div class="role-btn" onclick="selectRole(this,'Finance')" data-role="Finance">
+          <div class="role-icon">💰</div>
+          <div class="role-name">Finance</div>
+        </div>
+        <div class="role-btn" onclick="selectRole(this,'Viewer')" data-role="Viewer">
+          <div class="role-icon">👁️</div>
+          <div class="role-name">Viewer</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="Enter your username" autocomplete="username"
+             onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <div style="position:relative;">
+        <input type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter')attemptLogin()"
+               style="padding-right:40px;">
+        <span onclick="togglePwd()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:14px;color:#3a4f5e;user-select:none;" id="pwdEye">👁</span>
+      </div>
+    </div>
+
+    <div id="loginError" class="login-error"></div>
+
+    <button class="login-btn" id="loginBtn" onclick="attemptLogin()">
+      Access Dashboard →
+    </button>
+
+    <div class="login-divider"><span>Pilot Access Credentials</span></div>
+
+    <div style="background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.12);border-radius:8px;padding:10px 14px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#6b7f8f;line-height:2;">
+        <span style="color:#f97316;">Executive</span> · user: <b style="color:#e8edf2;">admin</b> · pass: <b style="color:#e8edf2;">Foodelo@2025</b><br>
+        <span style="color:#22d3ee;">Operations</span> · user: <b style="color:#e8edf2;">ops</b> · pass: <b style="color:#e8edf2;">Pilot@Ops</b><br>
+        <span style="color:#22c55e;">Finance</span> · user: <b style="color:#e8edf2;">finance</b> · pass: <b style="color:#e8edf2;">Fin@2025</b><br>
+        <span style="color:#8b5cf6;">Viewer</span> · user: <b style="color:#e8edf2;">viewer</b> · pass: <b style="color:#e8edf2;">View@Pilot</b>
+      </div>
+    </div>
+
+    <div class="login-footer">
+      Secured · <span>Foodelo Pilot Program 2025</span> · Powered by FundCo
+    </div>
+  </div>
+</div>
+
 
 <!-- HEADER -->
 <header>
@@ -615,7 +1021,10 @@
       <span id="wsLabel">Simulated Feed</span>
     </div>
     <div class="clock" id="clock"></div>
+    <span class="role-badge" id="roleBadge">—</span>
+    <div class="session-timer" id="sessionTimer"></div>
     <div class="month-badge" id="currentPhaseBadge">MONTH 1 — BASELINE</div>
+    <button onclick="logOut()" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 10px;border-radius:4px;cursor:pointer;">⏻ Logout</button>
   </div>
 </header>
 
@@ -669,6 +1078,7 @@
   <button class="tab-btn" onclick="switchTab('riders')">🛵 Riders</button>
   <button class="tab-btn" onclick="switchTab('scalability')">📈 Scalability</button>
   <button class="tab-btn" onclick="switchTab('connect')">🔗 Connect Data</button>
+  <button class="tab-btn" id="adminTabBtn" onclick="openAdminTab()" style="margin-left:auto;color:var(--accent5);border-bottom-color:transparent;">⚙️ Admin Settings</button>
 </div>
 
 <!-- MAIN -->
@@ -1257,7 +1667,7 @@
       <div class="connect-card" onclick="showGoogleSheets()">
         <div class="connect-icon">📋</div>
         <div class="connect-title">Google Sheets</div>
-        <div class="connect-desc">Paste a published Google Sheets CSV URL for auto-sync.</div>
+        <div class="connect-desc">Paste any Google Sheets link — auto-converts & syncs live.</div>
         <br><span class="pill green">✓ Supported</span>
       </div>
 
@@ -1314,6 +1724,70 @@
       </div>
     </div>
 
+    <!-- Google Sheets Panel -->
+    <div id="googleSheetsPanel" style="display:none;margin-bottom:12px;">
+      <div class="chart-card">
+        <div class="chart-title">📋 Google Sheets — Live Connection</div>
+        <div style="display:grid;gap:10px;margin-top:12px;">
+
+          <div style="background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.15);border-radius:8px;padding:12px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent2);font-weight:700;margin-bottom:8px;">📌 HOW TO MAKE YOUR SHEET PUBLIC (Required)</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);line-height:1.8;">
+              1. Open your Google Sheet<br>
+              2. Click <b style="color:var(--text)">File → Share → Publish to web</b><br>
+              3. Select <b style="color:var(--text)">Sheet1</b> (or the sheet with your data) and <b style="color:var(--text)">Comma-separated values (.csv)</b><br>
+              4. Click <b style="color:var(--text)">Publish</b> → Copy the link<br>
+              5. OR just paste the normal Google Sheets URL below — we'll convert it automatically
+            </div>
+          </div>
+
+          <div>
+            <div class="kpi-label" style="margin-bottom:4px;">Google Sheets URL (any format — edit, share, or publish link)</div>
+            <input id="gsUrl" type="text"
+              placeholder="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit"
+              style="width:100%;background:var(--surface2);border:1px solid var(--border-bright);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;"
+              oninput="document.getElementById('gsUrlPreview').textContent=parseGoogleSheetURL(this.value)||'(paste link above)'"
+            >
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:4px;">
+              CSV endpoint: <span id="gsUrlPreview" style="color:var(--accent2)">(paste link above)</span>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div>
+              <div class="kpi-label" style="margin-bottom:4px;">Auto-refresh every (seconds)</div>
+              <input id="gsInterval" type="number" value="60" min="10"
+                style="width:100px;background:var(--surface2);border:1px solid var(--border-bright);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;">
+            </div>
+          </div>
+
+          <div class="flex-row">
+            <button id="gsConnectBtn" class="btn btn-primary" onclick="connectGoogleSheets()">Connect Google Sheets</button>
+            <button class="btn btn-secondary" onclick="disconnectGoogleSheets()">Disconnect</button>
+          </div>
+
+          <div id="gsStatus" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);">Not connected</div>
+
+          <div>
+            <div class="kpi-label" style="margin-bottom:6px;">Live Data Preview (last 4 rows)</div>
+            <div style="overflow-x:auto;">
+              <table class="data-table" id="gsPreviewTable" style="font-size:10px;"></table>
+            </div>
+          </div>
+
+          <div style="background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.15);border-radius:8px;padding:12px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);font-weight:700;margin-bottom:6px;">📊 EXPECTED COLUMN NAMES IN YOUR SHEET</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);line-height:1.8;">
+              Use any of these column headers (case-insensitive):<br>
+              <span style="color:var(--accent2)">total_orders</span> · <span style="color:var(--accent2)">revenue</span> · <span style="color:var(--accent2)">opex</span> · <span style="color:var(--accent2)">csat</span> · <span style="color:var(--accent2)">nps</span> · <span style="color:var(--accent2)">avg_delivery</span><br>
+              <span style="color:var(--accent2)">uptime</span> · <span style="color:var(--accent2)">payment_success</span> · <span style="color:var(--accent2)">active_riders</span> · <span style="color:var(--accent2)">refund_rate</span> · <span style="color:var(--accent2)">dau</span><br>
+              Also accepts: <span style="color:var(--text-dim)">orders, sales, gross_revenue, delivery_time, system_uptime, riders...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Data mapping -->
     <div class="section-title">Column Mapping (After Upload)</div>
     <div class="chart-card">
@@ -1338,6 +1812,474 @@
 
     <div id="uploadFeedback" style="margin-top:12px;"></div>
   </div>
+
+
+<!-- ══ ADMIN SETTINGS OVERLAY ═══════════════════════════════════════════════ -->
+<div id="adminOverlay">
+  <div class="admin-panel">
+
+    <div class="admin-header">
+      <div class="admin-header-left">
+        <div class="admin-header-icon">⚙️</div>
+        <div>
+          <div class="admin-title">Admin Settings</div>
+          <div class="admin-sub">Foodelo Pilot Dashboard — Configuration Center</div>
+        </div>
+      </div>
+      <button class="admin-close" onclick="closeAdmin()">✕ Close</button>
+    </div>
+
+    <!-- Admin sub-tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('datasources')">🔗 Data Sources</button>
+      <button class="admin-tab" onclick="switchAdminTab('users')">👥 Users & Access</button>
+      <button class="admin-tab" onclick="switchAdminTab('pilot')">📊 Pilot Settings</button>
+      <button class="admin-tab" onclick="switchAdminTab('kpitargets')">🎯 KPI Targets</button>
+      <button class="admin-tab" onclick="switchAdminTab('display')">🖥️ Display</button>
+      <button class="admin-tab" onclick="switchAdminTab('notifications')">🔔 Alerts</button>
+    </div>
+
+    <div class="admin-body">
+
+      <!-- ── DATA SOURCES ── -->
+      <div class="admin-section active" id="asec-datasources">
+
+        <!-- Google Sheets -->
+        <div class="admin-card">
+          <div class="admin-card-title">📋 Google Sheets
+            <span class="conn-status disconnected" id="gs-admin-status">Disconnected</span>
+          </div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">Google Sheets URL (any format)</label>
+              <input class="admin-input" id="adm-gsUrl" placeholder="https://docs.google.com/spreadsheets/d/..." type="text">
+            </div>
+            <div>
+              <label class="admin-label">Auto-refresh Interval (seconds)</label>
+              <input class="admin-input" id="adm-gsInterval" type="number" value="60" min="10">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button class="admin-save-btn" onclick="admConnectGS()">⚡ Connect & Sync Now</button>
+            <button class="admin-danger-btn" onclick="admDisconnectGS()">Disconnect</button>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:10px;">
+            💡 Make sheet public: File → Share → Publish to web → CSV → Publish
+          </div>
+          <div class="admin-success" id="gs-admin-msg">✓ Connected successfully</div>
+        </div>
+
+        <!-- Foodelo App API -->
+        <div class="admin-card">
+          <div class="admin-card-title">🍜 Foodelo App API
+            <span class="conn-status disconnected" id="api-admin-status">Disconnected</span>
+          </div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">API Base URL</label>
+              <input class="admin-input" id="adm-apiUrl" placeholder="https://api.foodelo.ng/v1" type="text">
+            </div>
+            <div>
+              <label class="admin-label">API Key</label>
+              <input class="admin-input" id="adm-apiKey" placeholder="flo_live_xxxxxxxxxxxx" type="password">
+            </div>
+          </div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">Poll Interval (seconds)</label>
+              <input class="admin-input" id="adm-apiInterval" type="number" value="30" min="10">
+            </div>
+            <div>
+              <label class="admin-label">Endpoint Path (optional)</label>
+              <input class="admin-input" id="adm-apiEndpoint" placeholder="/pilot/metrics" type="text">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="admin-save-btn" onclick="admConnectAPI()">⚡ Connect API</button>
+            <button class="admin-danger-btn" onclick="admTestAPI()">🔬 Test Connection</button>
+            <button class="admin-danger-btn" onclick="admDisconnectAPI()">Disconnect</button>
+          </div>
+          <div class="admin-success" id="api-admin-msg">✓ API connected</div>
+          <div id="api-admin-test" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:8px;"></div>
+        </div>
+
+        <!-- SharePoint -->
+        <div class="admin-card">
+          <div class="admin-card-title">☁️ SharePoint / OneDrive
+            <span class="conn-status disconnected" id="sp-admin-status">Disconnected</span>
+          </div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">SharePoint File URL</label>
+              <input class="admin-input" id="adm-spUrl" placeholder="https://yourorg.sharepoint.com/sites/.../foodelo-pilot.xlsx">
+            </div>
+            <div>
+              <label class="admin-label">Poll Interval (seconds)</label>
+              <input class="admin-input" id="adm-spInterval" type="number" value="120" min="30">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="admin-save-btn" onclick="admConnectSP()">⚡ Connect SharePoint</button>
+            <button class="admin-danger-btn" onclick="admDisconnectSP()">Disconnect</button>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:10px;">
+            💡 File must be set to "Anyone with the link can view" in SharePoint permissions
+          </div>
+        </div>
+
+        <!-- WebSocket -->
+        <div class="admin-card">
+          <div class="admin-card-title">⚡ WebSocket Live Feed
+            <span class="conn-status disconnected" id="ws-admin-status">Disconnected</span>
+          </div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">WebSocket Endpoint (WSS)</label>
+              <input class="admin-input" id="adm-wsUrl" placeholder="wss://api.foodelo.ng/ws/pilot">
+            </div>
+            <div>
+              <label class="admin-label">Auth Token (optional)</label>
+              <input class="admin-input" id="adm-wsToken" placeholder="Bearer token..." type="password">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="admin-save-btn" onclick="admConnectWS()">⚡ Connect WebSocket</button>
+            <button class="admin-danger-btn" onclick="admDisconnectWS()">Disconnect</button>
+          </div>
+        </div>
+
+        <!-- CSV / Excel Upload -->
+        <div class="admin-card">
+          <div class="admin-card-title">📊 CSV / Excel File Upload</div>
+          <div style="border:2px dashed var(--border-bright);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;"
+               onclick="document.getElementById('adminFileInput').click()"
+               onmouseover="this.style.borderColor='var(--accent5)'" onmouseout="this.style.borderColor='var(--border-bright)'">
+            <div style="font-size:28px;margin-bottom:6px;">📂</div>
+            <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px;">Drop file here or click to upload</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">Accepts .csv, .xlsx — columns auto-mapped to KPIs</div>
+          </div>
+          <input type="file" id="adminFileInput" accept=".csv,.xlsx,.json" style="display:none" onchange="admHandleFile(event)">
+          <div id="adm-file-status" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:8px;"></div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;">
+          <button class="admin-save-btn" onclick="admSaveDataSources()">💾 Save All Data Source Settings</button>
+        </div>
+      </div>
+
+      <!-- ── USERS & ACCESS ── -->
+      <div class="admin-section" id="asec-users">
+        <div class="admin-card">
+          <div class="admin-card-title">👥 Manage Users & Passwords</div>
+          <div id="userRows">
+            <!-- Dynamically rendered -->
+          </div>
+          <div style="margin-top:12px;">
+            <button class="admin-save-btn" onclick="admAddUser()">+ Add New User</button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">🛡️ Security Settings</div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">Max Login Attempts Before Lockout</label>
+              <input class="admin-input" id="adm-maxAttempts" type="number" value="5" min="1" max="20">
+            </div>
+            <div>
+              <label class="admin-label">Lockout Duration (seconds)</label>
+              <input class="admin-input" id="adm-lockoutDur" type="number" value="60" min="10">
+            </div>
+          </div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">Session Timeout (hours)</label>
+              <input class="admin-input" id="adm-sessionTimeout" type="number" value="4" min="1" max="24">
+            </div>
+            <div>
+              <label class="admin-label">Require Password on Export</label>
+              <select class="admin-input" id="adm-exportPwd">
+                <option value="no">No — allow free export</option>
+                <option value="yes">Yes — require password</option>
+              </select>
+            </div>
+          </div>
+          <button class="admin-save-btn" onclick="admSaveSecurity()">💾 Save Security Settings</button>
+          <div class="admin-success" id="sec-msg">✓ Saved</div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">📋 Active Sessions</div>
+          <div id="activeSessions" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);">
+            Loading...
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PILOT SETTINGS ── -->
+      <div class="admin-section" id="asec-pilot">
+        <div class="admin-card">
+          <div class="admin-card-title">📅 Pilot Phase Configuration</div>
+          <div class="admin-input-row3">
+            <div>
+              <label class="admin-label">Current Phase</label>
+              <select class="admin-input" id="adm-phase">
+                <option value="1">Month 1 — Baseline</option>
+                <option value="2">Month 2 — Optimization</option>
+                <option value="3">Month 3 — Validation</option>
+              </select>
+            </div>
+            <div>
+              <label class="admin-label">Pilot Start Date</label>
+              <input class="admin-input" id="adm-startDate" type="date">
+            </div>
+            <div>
+              <label class="admin-label">Pilot End Date</label>
+              <input class="admin-input" id="adm-endDate" type="date">
+            </div>
+          </div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">Month 1 Progress (%)</label>
+              <input class="admin-input" id="adm-m1prog" type="number" value="68" min="0" max="100">
+            </div>
+            <div>
+              <label class="admin-label">Month 2 Progress (%)</label>
+              <input class="admin-input" id="adm-m2prog" type="number" value="0" min="0" max="100">
+            </div>
+          </div>
+          <div>
+            <label class="admin-label">Pilot Description / Notes</label>
+            <textarea class="admin-input" id="adm-pilotNotes" rows="3" placeholder="Add notes about the pilot progress..." style="resize:vertical;"></textarea>
+          </div>
+          <button class="admin-save-btn" onclick="admSavePilot()">💾 Update Pilot Phase</button>
+          <div class="admin-success" id="pilot-msg">✓ Pilot settings updated</div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">🏢 Organization Settings</div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">Organization Name</label>
+              <input class="admin-input" id="adm-orgName" value="InfraCredit DREEF" placeholder="Your organization">
+            </div>
+            <div>
+              <label class="admin-label">Dashboard Title</label>
+              <input class="admin-input" id="adm-dashTitle" value="Foodelo Pilot" placeholder="Dashboard title">
+            </div>
+          </div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">Currency Symbol</label>
+              <select class="admin-input" id="adm-currency">
+                <option value="₦">₦ Nigerian Naira</option>
+                <option value="$">$ US Dollar</option>
+                <option value="£">£ British Pound</option>
+                <option value="€">€ Euro</option>
+              </select>
+            </div>
+            <div>
+              <label class="admin-label">Timezone</label>
+              <select class="admin-input" id="adm-tz">
+                <option value="Africa/Lagos">Africa/Lagos (WAT, UTC+1)</option>
+                <option value="UTC">UTC</option>
+                <option value="Europe/London">Europe/London</option>
+                <option value="America/New_York">America/New_York</option>
+              </select>
+            </div>
+          </div>
+          <button class="admin-save-btn" onclick="admSaveOrg()">💾 Save Organization Settings</button>
+          <div class="admin-success" id="org-msg">✓ Saved</div>
+        </div>
+      </div>
+
+      <!-- ── KPI TARGETS ── -->
+      <div class="admin-section" id="asec-kpitargets">
+        <div class="admin-card">
+          <div class="admin-card-title">🎯 KPI Targets — Month 3 Goals</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-bottom:14px;">
+            Edit target values. Dashboard will show red/amber/green based on actual vs target.
+          </div>
+          <div class="admin-grid2">
+            <div>
+              <label class="admin-label">Daily Orders Target</label>
+              <input class="admin-input" id="tgt-orders" type="number" value="180" placeholder="180">
+            </div>
+            <div>
+              <label class="admin-label">Monthly Revenue Target (₦)</label>
+              <input class="admin-input" id="tgt-revenue" type="number" value="6000000" placeholder="6000000">
+            </div>
+            <div>
+              <label class="admin-label">CSAT Target (0–5)</label>
+              <input class="admin-input" id="tgt-csat" type="number" step="0.1" value="4.7" placeholder="4.7">
+            </div>
+            <div>
+              <label class="admin-label">NPS Target</label>
+              <input class="admin-input" id="tgt-nps" type="number" value="75" placeholder="75">
+            </div>
+            <div>
+              <label class="admin-label">Platform Uptime Target (%)</label>
+              <input class="admin-input" id="tgt-uptime" type="number" step="0.1" value="99.9" placeholder="99.9">
+            </div>
+            <div>
+              <label class="admin-label">Max Delivery Time (min)</label>
+              <input class="admin-input" id="tgt-delivery" type="number" value="15" placeholder="15">
+            </div>
+            <div>
+              <label class="admin-label">Payment Success Target (%)</label>
+              <input class="admin-input" id="tgt-payment" type="number" step="0.1" value="99" placeholder="99">
+            </div>
+            <div>
+              <label class="admin-label">Max Refund Rate (%)</label>
+              <input class="admin-input" id="tgt-refund" type="number" step="0.1" value="1.0" placeholder="1.0">
+            </div>
+            <div>
+              <label class="admin-label">Rider Professionalism Target (/100)</label>
+              <input class="admin-input" id="tgt-rider" type="number" value="92" placeholder="92">
+            </div>
+            <div>
+              <label class="admin-label">Merchant Acceptance Target (%)</label>
+              <input class="admin-input" id="tgt-merchant" type="number" value="96" placeholder="96">
+            </div>
+          </div>
+          <div style="margin-top:14px;">
+            <button class="admin-save-btn" onclick="admSaveTargets()">💾 Save KPI Targets</button>
+            <button class="admin-danger-btn" style="margin-left:10px;" onclick="admResetTargets()">↺ Reset to Defaults</button>
+          </div>
+          <div class="admin-success" id="tgt-msg">✓ Targets saved — dashboard updated</div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">⚠️ Alert Thresholds</div>
+          <div class="admin-grid2">
+            <div>
+              <label class="admin-label">Uptime Alert Below (%)</label>
+              <input class="admin-input" id="alert-uptime" type="number" step="0.1" value="99.0">
+            </div>
+            <div>
+              <label class="admin-label">Refund Rate Alert Above (%)</label>
+              <input class="admin-input" id="alert-refund" type="number" step="0.1" value="3.0">
+            </div>
+            <div>
+              <label class="admin-label">CSAT Alert Below</label>
+              <input class="admin-input" id="alert-csat" type="number" step="0.1" value="4.0">
+            </div>
+            <div>
+              <label class="admin-label">Delivery Alert Above (min)</label>
+              <input class="admin-input" id="alert-delivery" type="number" value="30">
+            </div>
+          </div>
+          <button class="admin-save-btn" onclick="admSaveAlerts()">💾 Save Alert Thresholds</button>
+          <div class="admin-success" id="alert-msg">✓ Alert thresholds saved</div>
+        </div>
+      </div>
+
+      <!-- ── DISPLAY SETTINGS ── -->
+      <div class="admin-section" id="asec-display">
+        <div class="admin-card">
+          <div class="admin-card-title">🖥️ Dashboard Appearance</div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">Accent Color</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+                <div onclick="setAccent('#f97316')" style="width:28px;height:28px;border-radius:6px;background:#f97316;cursor:pointer;border:2px solid rgba(255,255,255,0.3);" title="Orange (default)"></div>
+                <div onclick="setAccent('#22d3ee')" style="width:28px;height:28px;border-radius:6px;background:#22d3ee;cursor:pointer;border:2px solid transparent;" title="Cyan"></div>
+                <div onclick="setAccent('#22c55e')" style="width:28px;height:28px;border-radius:6px;background:#22c55e;cursor:pointer;border:2px solid transparent;" title="Green"></div>
+                <div onclick="setAccent('#8b5cf6')" style="width:28px;height:28px;border-radius:6px;background:#8b5cf6;cursor:pointer;border:2px solid transparent;" title="Purple"></div>
+                <div onclick="setAccent('#f43f5e')" style="width:28px;height:28px;border-radius:6px;background:#f43f5e;cursor:pointer;border:2px solid transparent;" title="Rose"></div>
+                <div onclick="setAccent('#eab308')" style="width:28px;height:28px;border-radius:6px;background:#eab308;cursor:pointer;border:2px solid transparent;" title="Yellow"></div>
+              </div>
+            </div>
+            <div>
+              <label class="admin-label">Data Refresh Rate (seconds)</label>
+              <input class="admin-input" id="adm-refreshRate" type="number" value="4" min="1" max="60">
+            </div>
+          </div>
+          <div class="admin-toggle">
+            <div><div class="toggle-label">Show Live Ticker</div><div class="toggle-sub">Scrolling alert bar at top</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tog-ticker" checked onchange="toggleTicker(this)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="admin-toggle">
+            <div><div class="toggle-label">Show Grid Background</div><div class="toggle-sub">Animated dot grid effect</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tog-grid" checked onchange="toggleGrid(this)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="admin-toggle">
+            <div><div class="toggle-label">Compact Mode</div><div class="toggle-sub">Reduce card sizes for more data density</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tog-compact" onchange="toggleCompact(this)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="admin-toggle">
+            <div><div class="toggle-label">Auto-rotate Tabs</div><div class="toggle-sub">Cycle through tabs every 30 seconds (TV mode)</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tog-tvmode" onchange="toggleTVMode(this)"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">📑 Visible Tabs</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-bottom:12px;">Toggle which tabs appear in the dashboard navigation</div>
+          <div id="tabToggles"></div>
+          <button class="admin-save-btn" style="margin-top:12px;" onclick="admSaveDisplay()">💾 Apply Display Settings</button>
+          <div class="admin-success" id="disp-msg">✓ Display settings applied</div>
+        </div>
+      </div>
+
+      <!-- ── NOTIFICATIONS ── -->
+      <div class="admin-section" id="asec-notifications">
+        <div class="admin-card">
+          <div class="admin-card-title">🔔 Alert & Notification Settings</div>
+          <div class="admin-toggle">
+            <div><div class="toggle-label">Browser Notifications</div><div class="toggle-sub">Show desktop notifications for alerts</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tog-notif" onchange="toggleNotifs(this)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="admin-toggle">
+            <div><div class="toggle-label">Alert on Uptime Drop</div><div class="toggle-sub">Notify when uptime falls below threshold</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tog-uptime-alert" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="admin-toggle">
+            <div><div class="toggle-label">Alert on High Refund Rate</div><div class="toggle-sub">Notify when refund rate exceeds threshold</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tog-refund-alert" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="admin-toggle">
+            <div><div class="toggle-label">Alert on Low CSAT</div><div class="toggle-sub">Notify when CSAT drops below threshold</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tog-csat-alert" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="admin-toggle">
+            <div><div class="toggle-label">Daily Summary Toast</div><div class="toggle-sub">Show a daily KPI summary notification at 9am</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tog-daily" checked><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">📧 Email / Webhook Alerts</div>
+          <div class="admin-input-row">
+            <div>
+              <label class="admin-label">Alert Email Address</label>
+              <input class="admin-input" id="adm-alertEmail" type="email" placeholder="pilot@foodelo.ng">
+            </div>
+            <div>
+              <label class="admin-label">Webhook URL (Slack / Teams)</label>
+              <input class="admin-input" id="adm-webhook" type="url" placeholder="https://hooks.slack.com/...">
+            </div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);margin-bottom:10px;">
+            💡 Webhooks fire automatically when KPIs breach alert thresholds
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="admin-save-btn" onclick="admSaveNotifications()">💾 Save Notification Settings</button>
+            <button class="admin-danger-btn" onclick="admTestWebhook()">🧪 Test Webhook</button>
+          </div>
+          <div class="admin-success" id="notif-msg">✓ Notification settings saved</div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-title">📜 Activity Log</div>
+          <div id="activityLog" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);max-height:200px;overflow-y:auto;"></div>
+          <button class="admin-danger-btn" style="margin-top:10px;" onclick="document.getElementById('activityLog').innerHTML='';adminLog('Activity log cleared');">Clear Log</button>
+        </div>
+      </div>
+
+    </div><!-- /admin-body -->
+  </div><!-- /admin-panel -->
+</div><!-- /adminOverlay -->
 
 </div><!-- /main -->
 
@@ -2001,7 +2943,173 @@ function connectWebSocket() {
 // ─── API CONNECTION ───────────────────────────────────────────────────────────
 function showAPIConfig() { document.getElementById('apiConfigPanel').style.display = 'block'; switchTab('connect'); }
 function showSharePointConfig() { document.getElementById('sharePointPanel').style.display = 'block'; switchTab('connect'); }
-function showGoogleSheets() { alert('Paste your Google Sheets CSV export URL in the JSON Feed section and set poll interval.'); }
+function showGoogleSheets() {
+  document.getElementById('googleSheetsPanel').style.display = 'block';
+  switchTab('connect');
+}
+
+// ─── GOOGLE SHEETS CONNECTOR ──────────────────────────────────────────────────
+let gsInterval = null;
+
+function parseGoogleSheetURL(raw) {
+  raw = raw.trim();
+  if (raw.includes('export?format=csv') || raw.includes('output=csv')) return raw;
+  const match = raw.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if (!match) return null;
+  const sheetId = match[1];
+  const gidMatch = raw.match(/[#&?]gid=(\d+)/);
+  const gid = gidMatch ? gidMatch[1] : '0';
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/"/g,'').trim().toLowerCase()
+    .replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,''));
+  return lines.slice(1).map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let ch of line) {
+      if (ch === '"') { inQ = !inQ; continue; }
+      if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; continue; }
+      cur += ch;
+    }
+    cols.push(cur.trim());
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = cols[i] || '');
+    return obj;
+  });
+}
+
+const COL_MAP = {
+  total_orders:['total_orders','completed_orders','orders','order_count','total_completed'],
+  revenue:['revenue','gross_revenue','rev','total_revenue','sales'],
+  opex:['opex','operational_expenses','op_expenses','expenses','operational_cost'],
+  net_revenue:['net_revenue','net_rev','net_income','profit'],
+  refund_rate:['refund_rate','refunds','refund_percent'],
+  dau:['dau','daily_active_users','daily_users','daily_visits'],
+  csat:['csat','customer_satisfaction','satisfaction_score','csat_score'],
+  nps:['nps','net_promoter_score','net_promoter'],
+  avg_delivery:['avg_delivery','average_delivery','delivery_time','avg_delivery_time'],
+  platform_uptime:['uptime','platform_uptime','system_uptime'],
+  payment_success:['payment_success','payment_success_rate'],
+  active_riders:['active_riders','riders','rider_count'],
+  refund_rate:['refund_rate','refunds','refund_percent'],
+};
+
+function findCol(row, field) {
+  const aliases = COL_MAP[field] || [field];
+  for (const alias of aliases) {
+    if (row[alias] !== undefined && row[alias] !== '') return row[alias];
+  }
+  return null;
+}
+
+function cleanNum(val) {
+  if (val === null || val === undefined || val === '') return null;
+  const s = String(val).replace(/₦|\$|,/g,'').trim();
+  const m = s.match(/([\d.]+)([KkMm]?)/);
+  if (!m) return null;
+  let n = parseFloat(m[1]);
+  if (m[2].toLowerCase()==='k') n*=1000;
+  if (m[2].toLowerCase()==='m') n*=1000000;
+  return isNaN(n)?null:n;
+}
+
+function applySheetData(rows) {
+  if (!rows || rows.length === 0) { showToast('⚠ Sheet empty or unreadable'); return; }
+  const latest = rows[rows.length - 1];
+  const updates = [
+    ['kpi-orders',  findCol(latest,'total_orders'),    v => v.toLocaleString()],
+    ['kpi-rev',     findCol(latest,'revenue'),         v => '₦'+(v>=1e6?(v/1e6).toFixed(2)+'M':(v/1000).toFixed(0)+'K')],
+    ['kpi-opex',    findCol(latest,'opex'),            v => '₦'+(v>=1e6?(v/1e6).toFixed(2)+'M':(v/1000).toFixed(0)+'K')],
+    ['kpi-csat',    findCol(latest,'csat'),            v => v.toFixed(1)+'/5'],
+    ['kpi-nps',     findCol(latest,'nps'),             v => Math.round(v)+''],
+    ['kpi-delivery',findCol(latest,'avg_delivery'),    v => Math.round(v)+'<span style="font-size:13px">min</span>'],
+    ['kpi-uptime',  findCol(latest,'platform_uptime'), v => v.toFixed(1)+'%'],
+    ['kpi-payment', findCol(latest,'payment_success'), v => v.toFixed(1)+'%'],
+    ['kpi-riders',  findCol(latest,'active_riders'),   v => Math.round(v)+''],
+    ['kpi-refund',  findCol(latest,'refund_rate'),     v => v.toFixed(1)+'<span style="font-size:13px">%</span>'],
+  ];
+  let updated = 0;
+  updates.forEach(([id, raw, fmt]) => {
+    const el = document.getElementById(id);
+    if (!el || raw === null) return;
+    const num = cleanNum(raw);
+    if (num === null) return;
+    el.innerHTML = fmt(num);
+    el.style.transition = 'color 0.6s';
+    el.style.color = 'var(--accent2)';
+    setTimeout(()=> el.style.color = '', 1400);
+    updated++;
+  });
+  // Preview table
+  const preview = document.getElementById('gsPreviewTable');
+  if (preview && rows.length > 0) {
+    const cols = Object.keys(rows[0]).slice(0,9);
+    preview.innerHTML = `<thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
+      <tbody>${rows.slice(-4).map(r=>`<tr>${cols.map(c=>`<td>${r[c]||''}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  }
+  document.getElementById('gsStatus').innerHTML =
+    `<span style="color:var(--green)">✓ Synced — ${rows.length} rows, ${updated} KPIs updated</span>
+     <span style="color:var(--text-dim);margin-left:12px;">Last sync: ${new Date().toLocaleTimeString()}</span>`;
+  document.getElementById('wsDot').className = 'ws-dot connected';
+  document.getElementById('wsLabel').textContent = 'Sheets Live';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  showToast(`Google Sheets synced — ${rows.length} rows, ${updated} KPIs updated`);
+}
+
+async function connectGoogleSheets() {
+  const raw = document.getElementById('gsUrl').value.trim();
+  if (!raw) {
+    document.getElementById('gsStatus').innerHTML = '<span style="color:var(--red)">⚠ Please paste your Google Sheets link</span>';
+    return;
+  }
+  const csvUrl = parseGoogleSheetURL(raw);
+  if (!csvUrl) {
+    document.getElementById('gsStatus').innerHTML = '<span style="color:var(--red)">⚠ Invalid URL. Paste the full Google Sheets link.</span>';
+    return;
+  }
+  const btn = document.getElementById('gsConnectBtn');
+  btn.textContent = '⏳ Connecting...';
+  btn.disabled = true;
+  document.getElementById('gsStatus').innerHTML = '<span style="color:var(--yellow)">⏳ Fetching sheet data...</span>';
+  const secs = parseInt(document.getElementById('gsInterval').value || '60') * 1000;
+
+  const fetchAndApply = async () => {
+    try {
+      const proxy = 'https://corsproxy.io/?';
+      const res = await fetch(proxy + encodeURIComponent(csvUrl));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      if (text.includes('<html')) throw new Error('Sheet is not public. Publish it first (see instructions below).');
+      const rows = parseCSV(text);
+      applySheetData(rows);
+      btn.textContent = '✓ Connected';
+      btn.style.background = 'var(--green)';
+    } catch(err) {
+      document.getElementById('gsStatus').innerHTML =
+        `<span style="color:var(--red)">⚠ ${err.message}</span>`;
+      btn.textContent = 'Connect Google Sheets';
+      btn.disabled = false;
+    }
+  };
+
+  await fetchAndApply();
+  if (gsInterval) clearInterval(gsInterval);
+  gsInterval = setInterval(fetchAndApply, secs);
+}
+
+function disconnectGoogleSheets() {
+  if (gsInterval) { clearInterval(gsInterval); gsInterval = null; }
+  const btn = document.getElementById('gsConnectBtn');
+  if(btn){btn.textContent='Connect Google Sheets';btn.disabled=false;btn.style.background='';}
+  document.getElementById('gsStatus').innerHTML = '<span style="color:var(--text-muted)">Disconnected</span>';
+  document.getElementById('wsDot').className = 'ws-dot simulated';
+  document.getElementById('wsLabel').textContent = 'Simulated Feed';
+  showToast('Google Sheets disconnected');
+}
 
 function connectAPI() {
   const url = document.getElementById('apiUrl').value;
@@ -2111,9 +3219,708 @@ function showToast(msg) {
   setTimeout(()=>t.remove(), 3500);
 }
 
+
+// ══ AUTH & LOGIN ══════════════════════════════════════════════════════════════
+
+const USERS = {
+  admin:   { pass:'Foodelo@2025', role:'Executive',  access:'all' },
+  ops:     { pass:'Pilot@Ops',    role:'Operations', access:'ops' },
+  finance: { pass:'Fin@2025',     role:'Finance',    access:'fin' },
+  viewer:  { pass:'View@Pilot',   role:'Viewer',     access:'view' },
+};
+
+let currentUser = null;
+let selectedRole = 'Executive';
+let sessionStart = null;
+let sessionTimerInterval = null;
+let loginAttempts = 0;
+let lockoutUntil = null;
+
+function selectRole(el, role) {
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRole = role;
+}
+
+function togglePwd() {
+  const inp = document.getElementById('loginPass');
+  const eye = document.getElementById('pwdEye');
+  if (inp.type === 'password') { inp.type = 'text'; eye.textContent = '🙈'; }
+  else { inp.type = 'password'; eye.textContent = '👁'; }
+}
+
+function attemptLogin() {
+  const now = Date.now();
+  if (lockoutUntil && now < lockoutUntil) {
+    const secs = Math.ceil((lockoutUntil - now)/1000);
+    showLoginError(`Too many attempts. Try again in ${secs}s`);
+    return;
+  }
+
+  const username = document.getElementById('loginUser').value.trim().toLowerCase();
+  const password = document.getElementById('loginPass').value;
+  const btn = document.getElementById('loginBtn');
+
+  if (!username || !password) {
+    showLoginError('Please enter username and password');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Authenticating...';
+
+  setTimeout(() => {
+    const user = USERS[username];
+    if (user && user.pass === password) {
+      // Success
+      loginAttempts = 0;
+      currentUser = { username, role: user.role, access: user.access };
+      document.getElementById('roleBadge').textContent = user.role;
+      sessionStart = Date.now();
+      startSessionTimer();
+      document.getElementById('loginError').textContent = '';
+      btn.textContent = '✓ Access Granted';
+      btn.style.background = 'linear-gradient(135deg,#22c55e,#15803d)';
+      setTimeout(() => {
+        const screen = document.getElementById('loginScreen');
+        screen.classList.add('login-screen-exit');
+        setTimeout(() => { screen.style.display = 'none'; }, 400);
+        showToast(`Welcome, ${user.role} — ${username}. Session started.`);
+        applyRoleRestrictions(user.access);
+      }, 700);
+    } else {
+      loginAttempts++;
+      if (loginAttempts >= 5) {
+        lockoutUntil = Date.now() + 60000;
+        showLoginError('Account locked for 60s after 5 failed attempts');
+      } else {
+        showLoginError(`Invalid credentials (${5 - loginAttempts} attempts remaining)`);
+      }
+      btn.disabled = false;
+      btn.textContent = 'Access Dashboard →';
+      btn.style.background = '';
+      // Shake the box
+      const box = document.querySelector('.login-box');
+      box.style.animation = 'none';
+      setTimeout(() => box.style.animation = '', 10);
+    }
+  }, 800);
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('loginError');
+  el.textContent = msg;
+  el.style.animation = 'none';
+  setTimeout(() => el.style.animation = 'errShake 0.3s ease', 10);
+}
+
+function applyRoleRestrictions(access) {
+  // Viewers can't see financial raw data
+  if (access === 'view') {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      if (b.textContent.includes('Financial')) {
+        b.style.opacity = '0.4';
+        b.style.pointerEvents = 'none';
+        b.title = 'Finance access required';
+      }
+    });
+  }
+  // Operations: hide financial tab
+  if (access === 'ops') {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      if (b.textContent.includes('Financial')) {
+        b.style.opacity = '0.4';
+        b.style.pointerEvents = 'none';
+      }
+    });
+  }
+}
+
+function startSessionTimer() {
+  sessionTimerInterval = setInterval(() => {
+    if (!sessionStart) return;
+    const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+    const m = Math.floor(elapsed / 60).toString().padStart(2,'0');
+    const s = (elapsed % 60).toString().padStart(2,'0');
+    const el = document.getElementById('sessionTimer');
+    if (el) el.textContent = `Session: ${m}:${s}`;
+    // Auto-logout after 4 hours
+    if (elapsed > 14400) logOut();
+  }, 1000);
+}
+
+function logOut() {
+  if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+  currentUser = null; sessionStart = null;
+  // Reset header
+  document.getElementById('roleBadge').textContent = '—';
+  document.getElementById('sessionTimer').textContent = '';
+  document.getElementById('wsLabel').textContent = 'Simulated Feed';
+  document.getElementById('wsDot').className = 'ws-dot simulated';
+  // Restore tab access
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.style.opacity = '';
+    b.style.pointerEvents = '';
+  });
+  // Reset login form
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginPass').type = 'password';
+  document.getElementById('pwdEye').textContent = '👁';
+  document.getElementById('loginError').textContent = '';
+  const btn = document.getElementById('loginBtn');
+  btn.textContent = 'Access Dashboard →';
+  btn.disabled = false;
+  btn.style.background = '';
+  // Show login screen
+  const screen = document.getElementById('loginScreen');
+  screen.classList.remove('login-screen-exit');
+  screen.style.display = 'flex';
+  screen.style.animation = 'none';
+  showToast('Logged out successfully');
+}
+
+// Block dashboard interaction if not logged in
+document.addEventListener('DOMContentLoaded', () => {
+  // Intercept tab clicks if not logged in
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const originalOnclick = btn.getAttribute('onclick');
+    btn.setAttribute('onclick', `if(!currentUser){showLoginError('Please log in first');return;} ${originalOnclick}`);
+  });
+});
+
+
+// ══ ADMIN PANEL ═══════════════════════════════════════════════════════════════
+
+const admLog = [];
+function adminLog(msg) {
+  const ts = new Date().toLocaleTimeString();
+  admLog.unshift(`[${ts}] ${msg}`);
+  if (admLog.length > 50) admLog.pop();
+  const el = document.getElementById('activityLog');
+  if (el) el.innerHTML = admLog.map(l=>`<div style="padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.03);">${l}</div>`).join('');
+}
+
+function openAdminTab() {
+  if (!currentUser) { showToast('⚠ Please log in first'); return; }
+  if (currentUser.access !== 'all') { showToast('⚠ Admin access requires Executive role'); return; }
+  document.getElementById('adminOverlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  renderUserRows();
+  renderTabToggles();
+  renderActiveSessions();
+  adminLog('Admin panel opened by ' + currentUser.username);
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function switchAdminTab(name) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('asec-' + name).classList.add('active');
+}
+
+function showAdminSuccess(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 2500);
+}
+
+// ── DATA SOURCES ──────────────────────────────────────────────────────────────
+function admConnectGS() {
+  const url = document.getElementById('adm-gsUrl').value.trim();
+  const interval = document.getElementById('adm-gsInterval').value;
+  if (!url) { showToast('⚠ Please paste a Google Sheets URL'); return; }
+  // Sync with main connector
+  document.getElementById('gsUrl').value = url;
+  document.getElementById('gsInterval').value = interval;
+  document.getElementById('gs-admin-status').textContent = 'Connecting...';
+  document.getElementById('gs-admin-status').className = 'conn-status testing';
+  connectGoogleSheets().then ? connectGoogleSheets() : connectGoogleSheets();
+  setTimeout(() => {
+    const s = document.getElementById('gsStatus').textContent;
+    if (s.includes('Synced') || s.includes('rows')) {
+      document.getElementById('gs-admin-status').textContent = 'Connected ✓';
+      document.getElementById('gs-admin-status').className = 'conn-status connected';
+      showAdminSuccess('gs-admin-msg');
+      admSaveToStorage();
+    } else {
+      document.getElementById('gs-admin-status').textContent = 'Failed';
+      document.getElementById('gs-admin-status').className = 'conn-status disconnected';
+    }
+  }, 3500);
+  adminLog('Google Sheets connect attempted: ' + url.slice(0,50) + '...');
+}
+
+function admDisconnectGS() {
+  disconnectGoogleSheets();
+  document.getElementById('gs-admin-status').textContent = 'Disconnected';
+  document.getElementById('gs-admin-status').className = 'conn-status disconnected';
+  adminLog('Google Sheets disconnected');
+}
+
+function admConnectAPI() {
+  const url = document.getElementById('adm-apiUrl').value.trim();
+  const key = document.getElementById('adm-apiKey').value.trim();
+  const interval = document.getElementById('adm-apiInterval').value;
+  const endpoint = document.getElementById('adm-apiEndpoint').value.trim() || '/pilot/metrics';
+  if (!url || !key) { showToast('⚠ API URL and Key are required'); return; }
+  document.getElementById('adm-apiUrl').value = url;
+  document.getElementById('apiUrl') && (document.getElementById('apiUrl').value = url);
+  document.getElementById('apiKey') && (document.getElementById('apiKey').value = key);
+  document.getElementById('pollInterval') && (document.getElementById('pollInterval').value = interval);
+  document.getElementById('api-admin-status').textContent = 'Connecting...';
+  document.getElementById('api-admin-status').className = 'conn-status testing';
+  connectAPI();
+  setTimeout(() => {
+    document.getElementById('api-admin-status').textContent = 'Connected ✓';
+    document.getElementById('api-admin-status').className = 'conn-status connected';
+    showAdminSuccess('api-admin-msg');
+    admSaveToStorage();
+  }, 1500);
+  adminLog('Foodelo API connect: ' + url);
+}
+
+function admDisconnectAPI() {
+  if (state.apiInterval) clearInterval(state.apiInterval);
+  document.getElementById('api-admin-status').textContent = 'Disconnected';
+  document.getElementById('api-admin-status').className = 'conn-status disconnected';
+  adminLog('Foodelo API disconnected');
+}
+
+function admTestAPI() {
+  const url = document.getElementById('adm-apiUrl').value.trim();
+  const key = document.getElementById('adm-apiKey').value.trim();
+  const el = document.getElementById('api-admin-test');
+  el.textContent = '⏳ Pinging...';
+  el.style.color = 'var(--yellow)';
+  document.getElementById('api-admin-status').className = 'conn-status testing';
+  setTimeout(() => {
+    if (url && key) {
+      el.textContent = '⚠ Simulation mode — enter real Foodelo API URL & key to get live data';
+      el.style.color = 'var(--yellow)';
+    } else {
+      el.textContent = '⚠ Please fill in API URL and Key first';
+      el.style.color = 'var(--red)';
+    }
+  }, 1000);
+  adminLog('API connection test run');
+}
+
+function admConnectSP() {
+  const url = document.getElementById('adm-spUrl').value.trim();
+  if (!url) { showToast('⚠ Please enter SharePoint URL'); return; }
+  document.getElementById('sp-admin-status').textContent = 'Configured ✓';
+  document.getElementById('sp-admin-status').className = 'conn-status connected';
+  admSaveToStorage();
+  showToast('SharePoint URL saved. Note: CORS proxy may be needed for cross-domain access.');
+  adminLog('SharePoint configured: ' + url.slice(0,50));
+}
+
+function admDisconnectSP() {
+  document.getElementById('sp-admin-status').textContent = 'Disconnected';
+  document.getElementById('sp-admin-status').className = 'conn-status disconnected';
+  adminLog('SharePoint disconnected');
+}
+
+function admConnectWS() {
+  const url = document.getElementById('adm-wsUrl').value.trim();
+  if (!url) { showToast('⚠ Please enter WebSocket URL (wss://)'); return; }
+  document.getElementById('ws-admin-status').textContent = 'Connecting...';
+  document.getElementById('ws-admin-status').className = 'conn-status testing';
+  // Attempt real WSS connection
+  try {
+    if (state.ws) state.ws.close();
+    state.ws = new WebSocket(url);
+    state.ws.onopen = () => {
+      document.getElementById('ws-admin-status').textContent = 'Connected ✓';
+      document.getElementById('ws-admin-status').className = 'conn-status connected';
+      document.getElementById('wsDot').className = 'ws-dot connected';
+      document.getElementById('wsLabel').textContent = 'WSS Live';
+      showToast('✓ WebSocket connected: ' + url);
+      adminLog('WebSocket connected: ' + url);
+    };
+    state.ws.onmessage = (e) => {
+      try { const d = JSON.parse(e.data); ingestData(d); } catch(ex) {}
+    };
+    state.ws.onerror = () => {
+      document.getElementById('ws-admin-status').textContent = 'Error';
+      document.getElementById('ws-admin-status').className = 'conn-status disconnected';
+      showToast('⚠ WebSocket connection failed — check URL');
+    };
+    state.ws.onclose = () => {
+      document.getElementById('ws-admin-status').textContent = 'Closed';
+      document.getElementById('ws-admin-status').className = 'conn-status disconnected';
+    };
+  } catch(e) {
+    showToast('⚠ Invalid WebSocket URL');
+  }
+}
+
+function admDisconnectWS() {
+  if (state.ws) { state.ws.close(); state.ws = null; }
+  document.getElementById('ws-admin-status').textContent = 'Disconnected';
+  document.getElementById('ws-admin-status').className = 'conn-status disconnected';
+  document.getElementById('wsDot').className = 'ws-dot simulated';
+  document.getElementById('wsLabel').textContent = 'Simulated Feed';
+  adminLog('WebSocket disconnected');
+}
+
+function admHandleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  handleFileUpload(e);
+  document.getElementById('adm-file-status').innerHTML =
+    `<span style="color:var(--green)">✓ ${file.name} uploaded (${(file.size/1024).toFixed(1)} KB)</span>`;
+  adminLog('File uploaded: ' + file.name);
+}
+
+function admSaveDataSources() {
+  admSaveToStorage();
+  showAdminSuccess('gs-admin-msg');
+  showToast('✓ Data source settings saved');
+  adminLog('Data source settings saved');
+}
+
+// ── USERS ─────────────────────────────────────────────────────────────────────
+function renderUserRows() {
+  const container = document.getElementById('userRows');
+  container.innerHTML = Object.entries(USERS).map(([uname, data]) => `
+    <div class="user-row" id="urow-${uname}">
+      <div>
+        <label class="admin-label">Username</label>
+        <input class="admin-input" value="${uname}" id="uname-${uname}" placeholder="username" style="margin-bottom:0;">
+      </div>
+      <div>
+        <label class="admin-label">Password</label>
+        <input class="admin-input" value="${data.pass}" id="upass-${uname}" type="text" placeholder="password" style="margin-bottom:0;">
+      </div>
+      <div>
+        <label class="admin-label">Role</label>
+        <select class="admin-input" id="urole-${uname}" style="margin-bottom:0;">
+          <option value="Executive" ${data.role==='Executive'?'selected':''}>👔 Executive</option>
+          <option value="Operations" ${data.role==='Operations'?'selected':''}>⚙️ Operations</option>
+          <option value="Finance" ${data.role==='Finance'?'selected':''}>💰 Finance</option>
+          <option value="Viewer" ${data.role==='Viewer'?'selected':''}>👁️ Viewer</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:2px;">
+        <button class="admin-danger-btn" onclick="admDeleteUser('${uname}')" ${uname==='admin'?'disabled title="Cannot delete admin"':''}>✕</button>
+      </div>
+    </div>
+  `).join('') + `<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:12px;">
+    <button class="admin-save-btn" onclick="admSaveUsers()">💾 Save All Users</button>
+    <div class="admin-success" id="users-msg" style="display:inline-block;margin-left:10px;">✓ Users saved</div>
+  </div>`;
+}
+
+function admSaveUsers() {
+  Object.keys(USERS).forEach(uname => {
+    const newName = document.getElementById('uname-'+uname)?.value.trim();
+    const newPass = document.getElementById('upass-'+uname)?.value.trim();
+    const newRole = document.getElementById('urole-'+uname)?.value;
+    if (newPass) USERS[uname].pass = newPass;
+    if (newRole) {
+      USERS[uname].role = newRole;
+      const accessMap = {Executive:'all',Operations:'ops',Finance:'fin',Viewer:'view'};
+      USERS[uname].access = accessMap[newRole];
+    }
+  });
+  // Update credentials display on login screen
+  showAdminSuccess('users-msg');
+  admSaveToStorage();
+  showToast('✓ User credentials updated');
+  adminLog('Users updated by ' + currentUser.username);
+}
+
+function admAddUser() {
+  const id = 'user_' + Date.now();
+  USERS[id] = { pass:'NewPass@1', role:'Viewer', access:'view' };
+  renderUserRows();
+  adminLog('New user added');
+}
+
+function admDeleteUser(uname) {
+  if (uname === 'admin') return;
+  delete USERS[uname];
+  renderUserRows();
+  adminLog('User deleted: ' + uname);
+}
+
+function renderActiveSessions() {
+  const el = document.getElementById('activeSessions');
+  if (!el) return;
+  if (currentUser) {
+    const elapsed = Math.floor((Date.now() - sessionStart)/1000);
+    const m = Math.floor(elapsed/60); const s = elapsed%60;
+    el.innerHTML = `<div style="padding:8px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.1);border-radius:6px;">
+      <span style="color:var(--green)">● Active</span>
+      &nbsp;·&nbsp; <b>${currentUser.username}</b>
+      &nbsp;·&nbsp; ${currentUser.role}
+      &nbsp;·&nbsp; Session: ${m}m ${s}s
+      &nbsp;&nbsp;
+      <button class="admin-danger-btn" onclick="logOut();closeAdmin();">Force Logout</button>
+    </div>`;
+  } else {
+    el.textContent = 'No active sessions';
+  }
+}
+
+// ── PILOT SETTINGS ────────────────────────────────────────────────────────────
+function admSavePilot() {
+  const phase = document.getElementById('adm-phase').value;
+  const m1 = document.getElementById('adm-m1prog').value;
+  const m2 = document.getElementById('adm-m2prog').value;
+  const phases = document.querySelectorAll('.track-phase');
+  const labels = ['MONTH 1 — BASELINE','MONTH 2 — OPTIMIZATION','MONTH 3 — VALIDATION'];
+  document.getElementById('currentPhaseBadge').textContent = labels[phase-1];
+  if (phases.length >= 3) {
+    phases[0].querySelector('.track-phase-fill').style.width = m1 + '%';
+    phases[0].querySelector('div:last-child').textContent = m1 + '% complete';
+    phases[1].querySelector('.track-phase-fill').style.width = m2 + '%';
+    phases[1].querySelector('div:last-child').textContent = m2 > 0 ? m2 + '% complete' : 'Not started';
+  }
+  showAdminSuccess('pilot-msg');
+  admSaveToStorage();
+  showToast('✓ Pilot phase updated to Month ' + phase);
+  adminLog('Pilot phase set to Month ' + phase);
+}
+
+function admSaveOrg() {
+  const org = document.getElementById('adm-orgName').value;
+  const title = document.getElementById('adm-dashTitle').value;
+  const currency = document.getElementById('adm-currency').value;
+  // Update logo text
+  const logoText = document.querySelector('.logo-text');
+  if (logoText && title) logoText.innerHTML = title.split(' ').slice(0,-1).join(' ') + ' <span>' + (title.split(' ').pop()) + '</span>';
+  document.title = title + ' — Executive Dashboard';
+  showAdminSuccess('org-msg');
+  admSaveToStorage();
+  adminLog('Org settings updated: ' + org + ' / ' + title);
+}
+
+// ── KPI TARGETS ───────────────────────────────────────────────────────────────
+const defaultTargets = {
+  orders:180, revenue:6000000, csat:4.7, nps:75,
+  uptime:99.9, delivery:15, payment:99, refund:1.0, rider:92, merchant:96
+};
+
+function admSaveTargets() {
+  const targets = {
+    orders: +document.getElementById('tgt-orders').value,
+    revenue: +document.getElementById('tgt-revenue').value,
+    csat: +document.getElementById('tgt-csat').value,
+    nps: +document.getElementById('tgt-nps').value,
+    uptime: +document.getElementById('tgt-uptime').value,
+    delivery: +document.getElementById('tgt-delivery').value,
+    payment: +document.getElementById('tgt-payment').value,
+    refund: +document.getElementById('tgt-refund').value,
+    rider: +document.getElementById('tgt-rider').value,
+    merchant: +document.getElementById('tgt-merchant').value,
+  };
+  state.targets = targets;
+  showAdminSuccess('tgt-msg');
+  admSaveToStorage();
+  adminLog('KPI targets updated');
+}
+
+function admResetTargets() {
+  Object.entries(defaultTargets).forEach(([k,v]) => {
+    const el = document.getElementById('tgt-'+k);
+    if (el) el.value = v;
+  });
+  admSaveTargets();
+}
+
+function admSaveAlerts() {
+  showAdminSuccess('alert-msg');
+  admSaveToStorage();
+  adminLog('Alert thresholds saved');
+}
+
+// ── DISPLAY ───────────────────────────────────────────────────────────────────
+function setAccent(color) {
+  document.documentElement.style.setProperty('--accent', color);
+  document.querySelectorAll('[style*="background: linear-gradient(135deg, var(--accent)"]').forEach(el => {
+    el.style.background = `linear-gradient(135deg, ${color}, #dc2626)`;
+  });
+  showToast('✓ Accent color changed to ' + color);
+  adminLog('Accent color changed: ' + color);
+}
+
+function toggleTicker(cb) {
+  const ticker = document.querySelector('.alert-ticker');
+  if (ticker) ticker.style.display = cb.checked ? 'flex' : 'none';
+  adminLog('Ticker ' + (cb.checked ? 'shown' : 'hidden'));
+}
+
+function toggleGrid(cb) {
+  document.body.style.setProperty('--grid-opacity', cb.checked ? '1' : '0');
+  const before = document.querySelector('body::before');
+  document.body.classList.toggle('no-grid', !cb.checked);
+  adminLog('Background grid ' + (cb.checked ? 'shown' : 'hidden'));
+}
+
+function toggleCompact(cb) {
+  document.querySelectorAll('.kpi-card').forEach(c => {
+    c.style.padding = cb.checked ? '8px 10px' : '';
+  });
+  document.querySelectorAll('.kpi-value').forEach(v => {
+    v.style.fontSize = cb.checked ? '16px' : '';
+  });
+  adminLog('Compact mode ' + (cb.checked ? 'on' : 'off'));
+}
+
+let tvModeInterval = null;
+const tvTabs = ['overview','financial','customers','merchants','tech','riders','scalability'];
+let tvIndex = 0;
+function toggleTVMode(cb) {
+  if (cb.checked) {
+    tvModeInterval = setInterval(() => {
+      tvIndex = (tvIndex + 1) % tvTabs.length;
+      const btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-'+tvTabs[tvIndex]).classList.add('active');
+      initChartsForTab(tvTabs[tvIndex]);
+    }, 30000);
+    showToast('📺 TV Mode ON — tabs rotate every 30 seconds');
+  } else {
+    if (tvModeInterval) clearInterval(tvModeInterval);
+    showToast('TV Mode OFF');
+  }
+  adminLog('TV mode ' + (cb.checked ? 'enabled' : 'disabled'));
+}
+
+function renderTabToggles() {
+  const el = document.getElementById('tabToggles');
+  if (!el) return;
+  const tabs = [
+    ['overview','📊 Overview'],['financial','💰 Financial'],['customers','👥 Customers'],
+    ['merchants','🏪 Merchants'],['tech','⚙️ Technology'],['riders','🛵 Riders'],
+    ['scalability','📈 Scalability'],['connect','🔗 Connect Data']
+  ];
+  el.innerHTML = tabs.map(([id, label]) => `
+    <div class="admin-toggle">
+      <div><div class="toggle-label">${label}</div></div>
+      <label class="toggle-switch">
+        <input type="checkbox" checked onchange="toggleTabVisibility('${id}', this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  `).join('');
+}
+
+function toggleTabVisibility(tabId, show) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'"+tabId+"'")) {
+      btn.style.display = show ? '' : 'none';
+    }
+  });
+  adminLog('Tab ' + tabId + ' ' + (show ? 'shown' : 'hidden'));
+}
+
+function admSaveDisplay() {
+  showAdminSuccess('disp-msg');
+  admSaveToStorage();
+  adminLog('Display settings saved');
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────────────────────
+function toggleNotifs(cb) {
+  if (cb.checked) {
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') showToast('✓ Browser notifications enabled');
+      else { cb.checked = false; showToast('⚠ Browser notifications denied by browser'); }
+    });
+  }
+}
+
+function admSaveNotifications() {
+  showAdminSuccess('notif-msg');
+  admSaveToStorage();
+  adminLog('Notification settings saved');
+}
+
+function admTestWebhook() {
+  const url = document.getElementById('adm-webhook').value;
+  if (!url) { showToast('⚠ Please enter a webhook URL'); return; }
+  showToast('🧪 Test webhook sent to: ' + url.slice(0,40) + '...');
+  adminLog('Webhook test sent: ' + url);
+}
+
+// ── SAVE SETTINGS TO LOCALSTORAGE ────────────────────────────────────────────
+function admSaveToStorage() {
+  try {
+    const settings = {
+      gsUrl: document.getElementById('adm-gsUrl')?.value || '',
+      gsInterval: document.getElementById('adm-gsInterval')?.value || '60',
+      apiUrl: document.getElementById('adm-apiUrl')?.value || '',
+      apiInterval: document.getElementById('adm-apiInterval')?.value || '30',
+      spUrl: document.getElementById('adm-spUrl')?.value || '',
+      phase: document.getElementById('adm-phase')?.value || '1',
+      m1prog: document.getElementById('adm-m1prog')?.value || '68',
+      orgName: document.getElementById('adm-orgName')?.value || 'InfraCredit DREEF',
+      dashTitle: document.getElementById('adm-dashTitle')?.value || 'Foodelo Pilot',
+      targets: state.targets || defaultTargets,
+    };
+    localStorage.setItem('foodelo_admin_settings', JSON.stringify(settings));
+  } catch(e) {}
+}
+
+function admLoadFromStorage() {
+  try {
+    const raw = localStorage.getItem('foodelo_admin_settings');
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (s.gsUrl) document.getElementById('adm-gsUrl').value = s.gsUrl;
+    if (s.gsInterval) document.getElementById('adm-gsInterval').value = s.gsInterval;
+    if (s.apiUrl) document.getElementById('adm-apiUrl').value = s.apiUrl;
+    if (s.apiInterval) document.getElementById('adm-apiInterval').value = s.apiInterval;
+    if (s.spUrl) document.getElementById('adm-spUrl').value = s.spUrl;
+    if (s.phase) document.getElementById('adm-phase').value = s.phase;
+    if (s.m1prog) document.getElementById('adm-m1prog').value = s.m1prog;
+    if (s.orgName) document.getElementById('adm-orgName').value = s.orgName;
+    if (s.dashTitle) document.getElementById('adm-dashTitle').value = s.dashTitle;
+    if (s.targets) {
+      state.targets = s.targets;
+      Object.entries(s.targets).forEach(([k,v]) => {
+        const el = document.getElementById('tgt-'+k);
+        if(el) el.value = v;
+      });
+    }
+    adminLog('Settings restored from storage');
+  } catch(e) {}
+}
+
+// ── SECURITY ──────────────────────────────────────────────────────────────────
+function admSaveSecurity() {
+  showAdminSuccess('sec-msg');
+  admSaveToStorage();
+  adminLog('Security settings saved');
+}
+
+// Close admin on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('adminOverlay').style.display === 'block') {
+    closeAdmin();
+  }
+});
+
+// Close on backdrop click
+document.getElementById('adminOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeAdmin();
+});
+
 // ─── BOOTSTRAP ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', ()=>{
   initOverviewCharts();
+  admLoadFromStorage();
   // Start live simulation
   setInterval(()=>{
     // Rotate ticker
